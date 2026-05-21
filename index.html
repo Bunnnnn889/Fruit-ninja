@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fruit Ninja Clone</title>
+
+<style>
+
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:Arial;
+}
+
+/* 🌳 WOOD BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:
+    linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),
+    url("https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1500&q=80");
+
+  background-size:cover;
+  background-position:center;
+
+  z-index:-2;
+}
+
+/* DARK OVERLAY */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:-1;
+}
+
+#score{
+  position:fixed;
+  top:10px;
+  left:10px;
+  color:white;
+  font-size:24px;
+  text-shadow:0 0 10px black;
+}
+
+#failScreen{
+  position:fixed;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.85);
+  color:white;
+}
+
+#failScreen h1{
+  font-size:70px;
+  text-shadow:0 0 20px red;
+}
+
+button{
+  padding:15px 30px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:20px;
+}
+
+canvas{
+  display:block;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="score">Score: 0</div>
+
+<div id="failScreen">
+  <h1>GAME OVER</h1>
+  <div id="finalScore"></div>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let fruits = [];
+let particles = [];
+let score = 0;
+let running = true;
+
+const fruitTypes = ["🍎","🍊","🍌","🍉","🍇","🍍"];
+
+/* 🍉 FRUIT */
+class Fruit{
+  constructor(){
+
+    this.x = canvas.width * (0.2 + Math.random()*0.6);
+    this.y = canvas.height + 60;
+
+    this.size = 65;
+
+    /* 🔥 SLOWER SPEED */
+    this.speedY = -(5 + Math.random()*3);
+    this.speedX = (Math.random()-0.5)*2;
+
+    this.type = fruitTypes[Math.floor(Math.random()*fruitTypes.length)];
+    this.sliced = false;
+  }
+
+  update(){
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    this.speedY += 0.06; // weaker gravity = slower fall
+  }
+
+  draw(){
+    ctx.font = this.size + "px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = "white";
+    ctx.shadowBlur = 20;
+    ctx.fillText(this.type, this.x, this.y);
+    ctx.shadowBlur = 0;
+  }
+}
+
+/* PARTICLES */
+class Particle{
+  constructor(x,y){
+    this.x=x;
+    this.y=y;
+    this.life=1;
+    this.vx=(Math.random()-0.5)*6;
+    this.vy=(Math.random()-0.5)*6;
+  }
+
+  update(){
+    this.x+=this.vx;
+    this.y+=this.vy;
+    this.life-=0.02;
+  }
+
+  draw(){
+    ctx.globalAlpha=this.life;
+    ctx.fillStyle="orange";
+    ctx.fillRect(this.x,this.y,4,4);
+    ctx.globalAlpha=1;
+  }
+}
+
+/* SPAWN SLOWER */
+setInterval(()=>{
+  if(running){
+    fruits.push(new Fruit());
+  }
+},900);
+
+/* LOOP */
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  fruits.forEach((f,i)=>{
+    f.update();
+    f.draw();
+
+    /* ❌ STOP GAME ONLY IF THEY FALL TOO LOW */
+    if(f.y > canvas.height + 120){
+      endGame();
+    }
+
+    if(f.sliced){
+      fruits.splice(i,1);
+    }
+  });
+
+  particles.forEach((p,i)=>{
+    p.update();
+    p.draw();
+    if(p.life<=0) particles.splice(i,1);
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+/* SLICE */
+function slice(x,y){
+
+  fruits.forEach((f,i)=>{
+
+    let dx = f.x - x;
+    let dy = f.y - y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+
+    if(dist < f.size/2){
+
+      score++;
+      document.getElementById("score").innerText = "Score: " + score;
+
+      for(let i=0;i<12;i++){
+        particles.push(new Particle(f.x,f.y));
+      }
+
+      f.sliced = true;
+    }
+  });
+}
+
+/* CONTROLS */
+window.addEventListener("mousemove",(e)=>{
+  if(running) slice(e.clientX,e.clientY);
+});
+
+window.addEventListener("touchmove",(e)=>{
+  let t = e.touches[0];
+  if(running) slice(t.clientX,t.clientY);
+});
+
+/* GAME OVER */
+function endGame(){
+  running = false;
+  document.getElementById("failScreen").style.display="flex";
+  document.getElementById("finalScore").innerText =
+  "Your Score: " + score;
+}
+
+</script>
+
+</body>
+</html>
