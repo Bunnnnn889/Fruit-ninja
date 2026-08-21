@@ -6,6 +6,7 @@
 <title>Fruit Ninja</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   user-select:none;
@@ -26,11 +27,17 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
+
   background:
-    linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.65)),
+    linear-gradient(
+      rgba(0,0,0,.25),
+      rgba(0,0,0,.65)
+    ),
     url("https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=2000&q=80");
+
   background-size:cover;
   background-position:center;
+
   z-index:-2;
 }
 
@@ -38,7 +45,9 @@ body::after{
   content:"";
   position:fixed;
   inset:0;
+
   background:rgba(0,0,0,.35);
+
   z-index:-1;
 }
 
@@ -49,23 +58,34 @@ canvas{
   cursor:none;
 }
 
+
+/* =========================
+   HUD
+========================= */
+
 #hud{
   position:fixed;
   top:15px;
   left:20px;
   right:20px;
+
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
+
   color:white;
+
   pointer-events:none;
+
   z-index:5;
 }
 
 #score{
   font-size:32px;
   font-weight:bold;
-  text-shadow:0 3px 8px #000;
+
+  text-shadow:
+    0 3px 8px #000;
 }
 
 #highScore{
@@ -77,50 +97,130 @@ canvas{
 #lives{
   font-size:30px;
   letter-spacing:5px;
-  text-shadow:0 3px 8px #000;
+
+  text-shadow:
+    0 3px 8px #000;
 }
+
+
+/* =========================
+   COMBO
+========================= */
 
 #combo{
   position:fixed;
+
   top:100px;
   left:50%;
-  transform:translateX(-50%) scale(.5);
-  color:#fff;
+
+  transform:
+    translateX(-50%)
+    scale(.5);
+
+  color:white;
+
   font-size:42px;
   font-weight:bold;
   font-style:italic;
+
   text-shadow:
     0 0 8px #ffb300,
     0 3px 8px #000;
+
   opacity:0;
+
   pointer-events:none;
+
   z-index:10;
-  transition:transform .15s,opacity .15s;
+
+  transition:
+    transform .15s,
+    opacity .15s;
 }
 
 #combo.show{
   opacity:1;
-  transform:translateX(-50%) scale(1);
+
+  transform:
+    translateX(-50%)
+    scale(1);
 }
+
+
+/* =========================
+   START SCREEN
+========================= */
+
+#startScreen{
+  position:fixed;
+  inset:0;
+
+  display:flex;
+  flex-direction:column;
+
+  justify-content:center;
+  align-items:center;
+
+  background:rgba(0,0,0,.55);
+
+  color:white;
+
+  z-index:15;
+
+  text-align:center;
+}
+
+#startScreen h1{
+  font-size:80px;
+
+  margin:0;
+
+  font-style:italic;
+
+  text-shadow:
+    0 0 25px orange,
+    0 5px 10px #000;
+}
+
+#startScreen p{
+  font-size:20px;
+  opacity:.9;
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
 
 #gameOver{
   position:fixed;
   inset:0;
+
   display:none;
+
   flex-direction:column;
+
   justify-content:center;
   align-items:center;
+
   background:rgba(0,0,0,.78);
+
   color:white;
+
   z-index:20;
+
   text-align:center;
 }
 
 #gameOver h1{
   margin:0 0 10px;
+
   font-size:72px;
+
   letter-spacing:4px;
-  text-shadow:0 0 20px #ff2222;
+
+  text-shadow:
+    0 0 20px red;
 }
 
 #gameOver p{
@@ -130,115 +230,210 @@ canvas{
 
 #newHigh{
   color:#ffd43b;
+
   font-size:25px;
+
   font-weight:bold;
+
   display:none;
 }
 
+
+/* =========================
+   BUTTON
+========================= */
+
 button{
   margin-top:25px;
+
   padding:15px 38px;
+
   border:0;
+
   border-radius:12px;
-  background:linear-gradient(#ffcf33,#ff941f);
+
+  background:
+    linear-gradient(
+      #ffcf33,
+      #ff941f
+    );
+
   color:#321500;
+
   font-size:22px;
+
   font-weight:bold;
+
   cursor:pointer;
-  box-shadow:0 5px 15px rgba(0,0,0,.4);
+
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.4);
 }
 
 button:hover{
   transform:scale(1.05);
 }
 
-#startScreen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,.55);
-  color:white;
-  z-index:15;
-  text-align:center;
-}
-
-#startScreen h1{
-  font-size:80px;
-  margin:0;
-  font-style:italic;
-  text-shadow:0 0 25px orange,0 5px 10px #000;
-}
-
-#startScreen p{
-  font-size:20px;
-  opacity:.9;
-}
-
 .hidden{
   display:none !important;
 }
+
 </style>
 </head>
 
+
 <body>
 
+
+<!-- =========================
+     HUD
+========================= -->
+
 <div id="hud">
+
   <div>
-    <div id="score">Score: 0</div>
-    <div id="highScore">Best: 0</div>
+
+    <div id="score">
+      Score: 0
+    </div>
+
+    <div id="highScore">
+      Best: 0
+    </div>
+
   </div>
 
-  <div id="lives">❤️❤️❤️</div>
+  <div id="lives">
+    ❤️❤️❤️
+  </div>
+
 </div>
+
 
 <div id="combo"></div>
 
+
+<!-- =========================
+     START
+========================= -->
+
 <div id="startScreen">
-  <h1>FRUIT NINJA</h1>
-  <p>Slice the fruit. Avoid the bombs.</p>
-  <p>Push down and move your mouse or finger to slash.</p>
-  <button id="startButton">START GAME</button>
+
+  <h1>
+    FRUIT NINJA
+  </h1>
+
+  <p>
+    Slice the fruit. Avoid the bombs.
+  </p>
+
+  <p>
+    Hold your mouse button and drag to slash.
+  </p>
+
+  <button id="startButton">
+    START GAME
+  </button>
+
 </div>
 
+
+<!-- =========================
+     GAME OVER
+========================= -->
+
 <div id="gameOver">
-  <h1>GAME OVER</h1>
-  <p id="finalScore">Score: 0</p>
-  <p id="finalBest">Best: 0</p>
-  <p id="newHigh">NEW HIGH SCORE!</p>
-  <button id="restartButton">PLAY AGAIN</button>
+
+  <h1>
+    GAME OVER
+  </h1>
+
+  <p id="finalScore">
+    Score: 0
+  </p>
+
+  <p id="finalBest">
+    Best: 0
+  </p>
+
+  <p id="newHigh">
+    NEW HIGH SCORE!
+  </p>
+
+  <button id="restartButton">
+    PLAY AGAIN
+  </button>
+
 </div>
+
 
 <canvas id="game"></canvas>
 
+
 <script>
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+
+/* =========================
+   CANVAS
+========================= */
+
+const canvas =
+  document.getElementById("game");
+
+const ctx =
+  canvas.getContext("2d");
+
+
+/* =========================
+   GAME VARIABLES
+========================= */
 
 let fruits = [];
+
+let slicedFruits = [];
+
 let particles = [];
+
 let bladeTrail = [];
 
+
 let score = 0;
+
 let lives = 3;
+
 let running = false;
 
+
 let combo = 0;
+
 let comboTimer = 0;
 
+
 let spawnTimer = 0;
-let lastTime = performance.now();
+
+let lastTime =
+  performance.now();
+
 
 let mouseX = 0;
+
 let mouseY = 0;
 
-let highScore =
-  Number(localStorage.getItem("fruitNinjaHighScore")) || 0;
 
-document.getElementById("highScore").textContent =
+let mouseDown = false;
+
+
+let highScore =
+  Number(
+    localStorage.getItem(
+      "fruitNinjaHighScore"
+    )
+  ) || 0;
+
+
+document
+  .getElementById("highScore")
+  .textContent =
   "Best: " + highScore;
 
 
@@ -248,17 +443,23 @@ document.getElementById("highScore").textContent =
 
 function resize(){
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width =
+    window.innerWidth;
+
+  canvas.height =
+    window.innerHeight;
 }
 
 resize();
 
-window.addEventListener("resize",resize);
+window.addEventListener(
+  "resize",
+  resize
+);
 
 
 /* =========================
-   FRUIT DATA
+   FRUITS
 ========================= */
 
 const fruitTypes = [
@@ -302,11 +503,85 @@ const fruitTypes = [
     emoji:"🍑",
     color:"#ff8a65"
   }
+
 ];
 
 
 /* =========================
-   FRUIT
+   DIFFICULTY
+========================= */
+
+function difficulty(){
+
+  return Math.floor(
+    score / 10
+  );
+}
+
+
+/* =========================
+   RANDOM LAUNCH
+========================= */
+
+function getLaunchVelocity(){
+
+  /*
+    Different launch types.
+
+    1 = low
+    2 = medium
+    3 = high
+    4 = VERY HIGH
+  */
+
+  const roll =
+    Math.random();
+
+
+  if(roll < .20){
+
+    // LOW
+
+    return (
+      9 +
+      Math.random()*2.5
+    );
+
+  }
+
+  if(roll < .50){
+
+    // MEDIUM
+
+    return (
+      11 +
+      Math.random()*3
+    );
+
+  }
+
+  if(roll < .80){
+
+    // HIGH
+
+    return (
+      14 +
+      Math.random()*4
+    );
+
+  }
+
+  // VERY HIGH
+
+  return (
+    18 +
+    Math.random()*5
+  );
+}
+
+
+/* =========================
+   FRUIT CLASS
 ========================= */
 
 class Fruit{
@@ -314,20 +589,27 @@ class Fruit{
   constructor(){
 
     /*
-      RANDOM START POSITION
-      Fruits can start anywhere
-      across the lower portion
-      of the screen.
+      RANDOM HORIZONTAL
+      START POSITION
     */
 
     this.x =
       canvas.width *
-      (0.08 + Math.random() * 0.84);
+      (
+        .08 +
+        Math.random()*.84
+      );
+
+
+    /*
+      START SLIGHTLY
+      BELOW SCREEN
+    */
 
     this.y =
       canvas.height +
-      60 +
-      Math.random() * 100;
+      50 +
+      Math.random()*80;
 
 
     /*
@@ -336,33 +618,38 @@ class Fruit{
 
     this.size =
       58 +
-      Math.random() * 18;
+      Math.random()*18;
 
 
     /*
-      RANDOM HORIZONTAL SPEED
-
-      Some fruits go left.
-      Some go right.
-      Some barely move sideways.
+      RANDOM HORIZONTAL
+      MOVEMENT
     */
 
     this.vx =
-      (Math.random() - 0.5) *
-      (3 + Math.random() * 5);
+      (
+        Math.random()-.5
+      ) *
+      (
+        2.5 +
+        Math.random()*5
+      );
 
 
     /*
-      MUCH HIGHER RANDOM LAUNCH
+      RANDOM HEIGHT
 
-      Every fruit gets a different
-      upward speed.
+      Low
+      Medium
+      High
+      Very High
     */
 
     this.vy =
-      -(13 +
-        Math.random() * 7 +
-        difficulty() * 0.15);
+      -(
+        getLaunchVelocity() +
+        difficulty()*.12
+      );
 
 
     /*
@@ -370,11 +657,19 @@ class Fruit{
     */
 
     this.rotation =
-      Math.random() * Math.PI * 2;
+      Math.random() *
+      Math.PI *
+      2;
+
 
     this.rotationSpeed =
-      (Math.random() - 0.5) *
-      (0.05 + Math.random() * 0.08);
+      (
+        Math.random()-.5
+      ) *
+      (
+        .05 +
+        Math.random()*.08
+      );
 
 
     /*
@@ -389,23 +684,27 @@ class Fruit{
         )
       ];
 
-    this.sliced = false;
-    this.dead = false;
+
+    this.dead=false;
   }
 
 
   update(dt){
 
-    this.x += this.vx * dt;
+    this.x +=
+      this.vx * dt;
 
-    this.y += this.vy * dt;
+
+    this.y +=
+      this.vy * dt;
 
 
     /*
       GRAVITY
     */
 
-    this.vy += 0.38 * dt;
+    this.vy +=
+      .38 * dt;
 
 
     this.rotation +=
@@ -413,26 +712,34 @@ class Fruit{
 
 
     /*
-      KEEP FRUIT ON SCREEN
+      BOUNCE OFF SIDES
     */
 
-    if(this.x < this.size){
-
-      this.x = this.size;
-
-      this.vx *= -1;
-    }
-
     if(
-      this.x >
-      canvas.width - this.size
+      this.x <
+      this.size
     ){
 
       this.x =
-        canvas.width - this.size;
+        this.size;
 
       this.vx *= -1;
     }
+
+
+    if(
+      this.x >
+      canvas.width -
+      this.size
+    ){
+
+      this.x =
+        canvas.width -
+        this.size;
+
+      this.vx *= -1;
+    }
+
   }
 
 
@@ -440,25 +747,35 @@ class Fruit{
 
     ctx.save();
 
+
     ctx.translate(
       this.x,
       this.y
     );
 
+
     ctx.rotate(
       this.rotation
     );
 
-    ctx.font =
-      this.size + "px Arial";
 
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
+    ctx.font =
+      this.size +
+      "px Arial";
+
+
+    ctx.textAlign =
+      "center";
+
+    ctx.textBaseline =
+      "middle";
+
 
     ctx.shadowColor =
       "rgba(255,255,255,.5)";
 
     ctx.shadowBlur=10;
+
 
     ctx.fillText(
       this.type.emoji,
@@ -466,8 +783,11 @@ class Fruit{
       0
     );
 
+
     ctx.restore();
+
   }
+
 }
 
 
@@ -481,37 +801,54 @@ class Bomb{
 
     this.x =
       canvas.width *
-      (.08 + Math.random()*.84);
+      (
+        .08 +
+        Math.random()*.84
+      );
+
 
     this.y =
       canvas.height +
-      60 +
-      Math.random()*100;
+      50 +
+      Math.random()*80;
+
 
     this.size =
       55 +
       Math.random()*12;
 
-    this.vx =
-      (Math.random()-.5) *
-      (3+Math.random()*5);
 
-    /*
-      BOMBS ALSO LAUNCH HIGH
-    */
+    this.vx =
+      (
+        Math.random()-.5
+      ) *
+      (
+        2.5 +
+        Math.random()*5
+      );
+
 
     this.vy =
-      -(13 +
-        Math.random()*7 +
-        difficulty()*.15);
+      -(
+        getLaunchVelocity() +
+        difficulty()*.12
+      );
+
 
     this.rotation =
-      Math.random()*Math.PI*2;
+      Math.random() *
+      Math.PI *
+      2;
+
 
     this.rotationSpeed =
-      (Math.random()-.5)*.1;
+      (
+        Math.random()-.5
+      )*.1;
+
 
     this.dead=false;
+
   }
 
 
@@ -523,30 +860,40 @@ class Bomb{
     this.y +=
       this.vy*dt;
 
+
     this.vy +=
       .38*dt;
+
 
     this.rotation +=
       this.rotationSpeed*dt;
 
 
-    if(this.x < this.size){
-
-      this.x=this.size;
-
-      this.vx*=-1;
-    }
-
     if(
-      this.x >
-      canvas.width-this.size
+      this.x <
+      this.size
     ){
 
       this.x =
-        canvas.width-this.size;
+        this.size;
 
-      this.vx*=-1;
+      this.vx *= -1;
     }
+
+
+    if(
+      this.x >
+      canvas.width -
+      this.size
+    ){
+
+      this.x =
+        canvas.width -
+        this.size;
+
+      this.vx *= -1;
+    }
+
   }
 
 
@@ -554,23 +901,35 @@ class Bomb{
 
     ctx.save();
 
+
     ctx.translate(
       this.x,
       this.y
     );
 
+
     ctx.rotate(
       this.rotation
     );
 
+
     ctx.font =
-      this.size+"px Arial";
+      this.size +
+      "px Arial";
 
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
 
-    ctx.shadowColor="red";
+    ctx.textAlign =
+      "center";
+
+    ctx.textBaseline =
+      "middle";
+
+
+    ctx.shadowColor =
+      "red";
+
     ctx.shadowBlur=15;
+
 
     ctx.fillText(
       "💣",
@@ -578,13 +937,16 @@ class Bomb{
       0
     );
 
+
     ctx.restore();
+
   }
+
 }
 
 
 /* =========================
-   FRUIT HALF
+   SLICED FRUIT HALF
 ========================= */
 
 class FruitHalf{
@@ -593,29 +955,54 @@ class FruitHalf{
     x,
     y,
     emoji,
+    color,
     side
   ){
 
     this.x=x;
+
     this.y=y;
 
     this.emoji=emoji;
 
+    this.color=color;
+
+
+    /*
+      LEFT AND RIGHT
+      HALVES FLY APART
+    */
+
     this.vx =
       side *
-      (2 + Math.random()*3);
+      (
+        2 +
+        Math.random()*3
+      );
+
 
     this.vy =
-      -2 -
-      Math.random()*3;
+      -(
+        2 +
+        Math.random()*3
+      );
+
 
     this.rotation =
-      Math.random()*Math.PI;
+      Math.random() *
+      Math.PI;
+
 
     this.rotationSpeed =
-      side*.08;
+      side *
+      (
+        .05 +
+        Math.random()*.06
+      );
+
 
     this.life=1;
+
   }
 
 
@@ -624,43 +1011,61 @@ class FruitHalf{
     this.x +=
       this.vx*dt;
 
+
     this.y +=
       this.vy*dt;
 
+
     this.vy +=
-      .3*dt;
+      .32*dt;
+
 
     this.rotation +=
       this.rotationSpeed*dt;
 
+
     this.life -=
       .018*dt;
+
   }
 
 
   draw(){
 
+    if(
+      this.life<=0
+    )
+      return;
+
+
     ctx.save();
 
+
     ctx.globalAlpha =
-      Math.max(
-        this.life,
-        0
-      );
+      this.life;
+
 
     ctx.translate(
       this.x,
       this.y
     );
 
+
     ctx.rotate(
       this.rotation
     );
 
-    ctx.font="55px Arial";
 
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
+    ctx.font =
+      "55px Arial";
+
+
+    ctx.textAlign =
+      "center";
+
+    ctx.textBaseline =
+      "middle";
+
 
     ctx.fillText(
       this.emoji,
@@ -668,8 +1073,11 @@ class FruitHalf{
       0
     );
 
+
     ctx.restore();
+
   }
+
 }
 
 
@@ -686,20 +1094,32 @@ class Particle{
   ){
 
     this.x=x;
+
     this.y=y;
 
+
     this.vx =
-      (Math.random()-.5)*10;
+      (
+        Math.random()-.5
+      )*10;
+
 
     this.vy =
-      (Math.random()-.5)*10;
+      (
+        Math.random()-.5
+      )*10;
+
 
     this.life=1;
 
+
     this.size =
-      2+Math.random()*5;
+      2 +
+      Math.random()*5;
+
 
     this.color=color;
+
   }
 
 
@@ -708,31 +1128,42 @@ class Particle{
     this.x +=
       this.vx*dt;
 
+
     this.y +=
       this.vy*dt;
+
 
     this.vy +=
       .2*dt;
 
+
     this.life -=
       .035*dt;
+
   }
 
 
   draw(){
 
+    if(
+      this.life<=0
+    )
+      return;
+
+
     ctx.save();
 
+
     ctx.globalAlpha =
-      Math.max(
-        this.life,
-        0
-      );
+      this.life;
+
 
     ctx.fillStyle =
       this.color;
 
+
     ctx.beginPath();
+
 
     ctx.arc(
       this.x,
@@ -742,18 +1173,24 @@ class Particle{
       Math.PI*2
     );
 
+
     ctx.fill();
 
+
     ctx.restore();
+
   }
+
 }
 
 
 /* =========================
-   PARTICLES
+   FRUIT JUICE
 ========================= */
 
-function createParticles(fruit){
+function createParticles(
+  fruit
+){
 
   for(
     let i=0;
@@ -768,37 +1205,61 @@ function createParticles(fruit){
         fruit.type.color
       )
     );
+
   }
+
 }
 
 
 /* =========================
-   DIFFICULTY
-========================= */
-
-function difficulty(){
-
-  return Math.floor(
-    score/10
-  );
-}
-
-
-/* =========================
-   SPAWN
+   SPAWN WAVE
 ========================= */
 
 function spawnWave(){
 
-  let amount =
+  /*
+    More fruits as
+    score increases.
+
+    Maximum of 4
+    fruits per wave.
+  */
+
+  let amount=1;
+
+
+  if(
     Math.random() <
     Math.min(
-      .1 +
-      difficulty()*.015,
-      .45
+      .20 +
+      difficulty()*.03,
+      .55
     )
-    ? 2
-    : 1;
+  ){
+
+    amount=2;
+
+  }
+
+
+  if(
+    difficulty()>=3 &&
+    Math.random()<.25
+  ){
+
+    amount=3;
+
+  }
+
+
+  if(
+    difficulty()>=7 &&
+    Math.random()<.18
+  ){
+
+    amount=4;
+
+  }
 
 
   for(
@@ -807,13 +1268,23 @@ function spawnWave(){
     i++
   ){
 
+    /*
+      Bomb chance.
+
+      Never too many bombs.
+    */
+
+    const bombChance =
+      Math.min(
+        .07 +
+        difficulty()*.006,
+        .16
+      );
+
+
     if(
       Math.random() <
-      Math.min(
-        .08 +
-        difficulty()*.005,
-        .18
-      )
+      bombChance
     ){
 
       fruits.push(
@@ -825,8 +1296,11 @@ function spawnWave(){
       fruits.push(
         new Fruit()
       );
+
     }
+
   }
+
 }
 
 
@@ -842,8 +1316,14 @@ function slice(
   if(!running)
     return;
 
+
   let slicedSomething=false;
 
+
+  /*
+    Go backwards so
+    removing items is safe.
+  */
 
   for(
     let i=fruits.length-1;
@@ -854,15 +1334,20 @@ function slice(
     const f =
       fruits[i];
 
-    if(f.dead)
+
+    if(
+      f.dead
+    )
       continue;
 
 
     const dx =
       f.x-x;
 
+
     const dy =
       f.y-y;
+
 
     const distance =
       Math.sqrt(
@@ -887,23 +1372,33 @@ function slice(
         bombHit();
 
         return;
+
       }
 
 
       /*
-        FRUIT
+        NORMAL FRUIT
       */
 
       f.dead=true;
 
+
       score++;
+
 
       slicedSomething=true;
 
-      document.getElementById("score")
-        .textContent =
-        "Score: " + score;
 
+      document
+        .getElementById("score")
+        .textContent =
+        "Score: " +
+        score;
+
+
+      /*
+        JUICE
+      */
 
       createParticles(f);
 
@@ -912,43 +1407,67 @@ function slice(
         CREATE TWO HALVES
       */
 
-      fruits.push(
+      slicedFruits.push(
         new FruitHalf(
           f.x,
           f.y,
           f.type.emoji,
+          f.type.color,
           -1
         )
       );
 
-      fruits.push(
+
+      slicedFruits.push(
         new FruitHalf(
           f.x,
           f.y,
           f.type.emoji,
+          f.type.color,
           1
         )
       );
 
 
+      /*
+        COMBO
+      */
+
       updateCombo();
+
+
+      /*
+        REMOVE FRUIT
+      */
 
       fruits.splice(
         i,
         1
       );
+
     }
+
   }
 
 
-  if(slicedSomething){
+  /*
+    Only create blade
+    trail when something
+    was actually sliced.
+  */
+
+  if(
+    slicedSomething
+  ){
 
     bladeTrail.push({
       x:x,
       y:y,
       life:1
     });
+
   }
+
 }
 
 
@@ -963,7 +1482,9 @@ function updateCombo(){
   comboTimer=70;
 
 
-  if(combo>=2){
+  if(
+    combo>=2
+  ){
 
     const multiplier =
       Math.min(
@@ -971,49 +1492,63 @@ function updateCombo(){
         5
       );
 
+
     const bonus =
       multiplier-1;
+
 
     score +=
       bonus;
 
 
-    document.getElementById("score")
+    document
+      .getElementById("score")
       .textContent =
-      "Score: " + score;
+      "Score: " +
+      score;
 
 
     showCombo(
-      combo+
+      combo +
       "x COMBO!"
     );
+
   }
+
 }
 
 
-function showCombo(text){
+function showCombo(
+  text
+){
 
   const element =
     document.getElementById(
       "combo"
     );
 
-  element.textContent=text;
+
+  element.textContent =
+    text;
+
 
   element.classList.remove(
     "show"
   );
 
+
   void element.offsetWidth;
+
 
   element.classList.add(
     "show"
   );
+
 }
 
 
 /* =========================
-   BOMB
+   BOMB HIT
 ========================= */
 
 function bombHit(){
@@ -1021,9 +1556,13 @@ function bombHit(){
   running=false;
 
 
+  /*
+    Explosion particles
+  */
+
   for(
     let i=0;
-    i<60;
+    i<70;
     i++
   ){
 
@@ -1031,36 +1570,66 @@ function bombHit(){
       new Particle(
         mouseX,
         mouseY,
-        "orange"
+        Math.random() <
+        .5
+        ? "orange"
+        : "red"
       )
     );
+
   }
 
 
+  /*
+    Small delay so
+    explosion is visible.
+  */
+
   setTimeout(
     endGame,
-    300
+    350
   );
+
 }
 
 
 /* =========================
-   LIVES
+   LOSE LIFE
 ========================= */
 
 function loseLife(){
 
+  /*
+    IMPORTANT:
+
+    Missing a fruit is
+    the ONLY normal way
+    to lose a life.
+
+    Hitting empty space
+    does NOTHING.
+  */
+
   lives--;
+
 
   updateLives();
 
 
-  if(lives<=0){
+  if(
+    lives<=0
+  ){
 
     endGame();
+
   }
+
 }
 
+
+/* =========================
+   UPDATE LIVES
+========================= */
 
 function updateLives(){
 
@@ -1073,15 +1642,28 @@ function updateLives(){
     i++
   ){
 
-    text +=
+    if(
       i<lives
-      ? "❤️"
-      : "🖤";
+    ){
+
+      text +=
+        "❤️";
+
+    }else{
+
+      text +=
+        "🖤";
+
+    }
+
   }
 
 
-  document.getElementById("lives")
-    .textContent=text;
+  document
+    .getElementById("lives")
+    .textContent =
+    text;
+
 }
 
 
@@ -1099,13 +1681,17 @@ function drawBlade(){
 
   ctx.save();
 
+
   ctx.lineWidth=5;
 
   ctx.lineCap="round";
 
-  ctx.shadowColor="white";
+
+  ctx.shadowColor =
+    "white";
 
   ctx.shadowBlur=15;
+
 
   ctx.beginPath();
 
@@ -1120,7 +1706,9 @@ function drawBlade(){
       bladeTrail[i];
 
 
-    if(i===0){
+    if(
+      i===0
+    ){
 
       ctx.moveTo(
         p.x,
@@ -1133,16 +1721,21 @@ function drawBlade(){
         p.x,
         p.y
       );
+
     }
+
   }
 
 
   ctx.strokeStyle =
     "rgba(255,255,255,.9)";
 
+
   ctx.stroke();
 
+
   ctx.restore();
+
 }
 
 
@@ -1150,10 +1743,13 @@ function drawBlade(){
    BLADE UPDATE
 ========================= */
 
-function updateBlade(dt){
+function updateBlade(
+  dt
+){
 
   for(
-    let i=bladeTrail.length-1;
+    let i=
+      bladeTrail.length-1;
     i>=0;
     i--
   ){
@@ -1170,8 +1766,11 @@ function updateBlade(dt){
         i,
         1
       );
+
     }
+
   }
+
 }
 
 
@@ -1179,7 +1778,9 @@ function updateBlade(dt){
    GAME LOOP
 ========================= */
 
-function animate(now){
+function animate(
+  now
+){
 
   const dt =
     Math.min(
@@ -1187,8 +1788,13 @@ function animate(now){
       2
     );
 
+
   lastTime=now;
 
+
+  /*
+    CLEAR SCREEN
+  */
 
   ctx.clearRect(
     0,
@@ -1198,15 +1804,27 @@ function animate(now){
   );
 
 
-  if(running){
+  if(
+    running
+  ){
 
-    spawnTimer -= dt;
+    /*
+      SPAWN
+    */
 
+    spawnTimer -=
+      dt;
+
+
+    /*
+      Spawns get faster
+      as score increases.
+    */
 
     const spawnRate =
       Math.max(
-        48,
-        70 -
+        45,
+        75 -
         difficulty()*3
       );
 
@@ -1217,17 +1835,20 @@ function animate(now){
 
       spawnWave();
 
+
       spawnTimer =
         spawnRate;
+
     }
 
 
     /*
-      FRUITS
+      NORMAL FRUITS + BOMBS
     */
 
     for(
-      let i=fruits.length-1;
+      let i=
+        fruits.length-1;
       i>=0;
       i--
     ){
@@ -1237,12 +1858,13 @@ function animate(now){
 
 
       f.update(dt);
+
+
       f.draw();
 
 
       /*
-        Only normal fruits
-        cost a life when missed.
+        Fruit reaches bottom.
       */
 
       if(
@@ -1256,13 +1878,62 @@ function animate(now){
         );
 
 
+        /*
+          ONLY normal fruits
+          cost a life.
+
+          Bombs that leave
+          the screen do NOT
+          cost a life.
+        */
+
         if(
           f instanceof Fruit
         ){
 
           loseLife();
+
         }
+
       }
+
+    }
+
+
+    /*
+      SLICED HALVES
+    */
+
+    for(
+      let i=
+        slicedFruits.length-1;
+      i>=0;
+      i--
+    ){
+
+      const half =
+        slicedFruits[i];
+
+
+      half.update(dt);
+
+
+      half.draw();
+
+
+      if(
+        half.life<=0 ||
+        half.y >
+        canvas.height+150
+      ){
+
+        slicedFruits.splice(
+          i,
+          1
+        );
+
+      }
+
     }
 
 
@@ -1271,7 +1942,8 @@ function animate(now){
     */
 
     for(
-      let i=particles.length-1;
+      let i=
+        particles.length-1;
       i>=0;
       i--
     ){
@@ -1279,7 +1951,10 @@ function animate(now){
       const p =
         particles[i];
 
+
       p.update(dt);
+
+
       p.draw();
 
 
@@ -1291,35 +1966,49 @@ function animate(now){
           i,
           1
         );
+
       }
+
     }
 
 
     /*
-      COMBO
+      COMBO TIMER
     */
 
     if(
       comboTimer>0
     ){
 
-      comboTimer-=dt;
+      comboTimer -=
+        dt;
 
     }else{
 
       combo=0;
+
 
       document
         .getElementById("combo")
         .classList.remove(
           "show"
         );
+
     }
 
 
+    /*
+      BLADE
+    */
+
     updateBlade(dt);
+
   }
 
+
+  /*
+    DRAW BLADE
+  */
 
   drawBlade();
 
@@ -1327,6 +2016,7 @@ function animate(now){
   requestAnimationFrame(
     animate
   );
+
 }
 
 
@@ -1336,11 +2026,8 @@ requestAnimationFrame(
 
 
 /* =========================
-   MOUSE
+   MOUSE CONTROLS
 ========================= */
-
-let mouseDown=false;
-
 
 canvas.addEventListener(
   "mousedown",
@@ -1348,13 +2035,22 @@ canvas.addEventListener(
 
     mouseDown=true;
 
+
     mouseX=e.clientX;
+
     mouseY=e.clientY;
+
+
+    /*
+      Slice immediately
+      when mouse is pressed.
+    */
 
     slice(
       mouseX,
       mouseY
     );
+
   }
 );
 
@@ -1362,7 +2058,19 @@ canvas.addEventListener(
 canvas.addEventListener(
   "mouseup",
   ()=>{
+
     mouseDown=false;
+
+  }
+);
+
+
+canvas.addEventListener(
+  "mouseleave",
+  ()=>{
+
+    mouseDown=false;
+
   }
 );
 
@@ -1372,10 +2080,19 @@ canvas.addEventListener(
   e=>{
 
     mouseX=e.clientX;
+
     mouseY=e.clientY;
 
 
-    if(mouseDown){
+    /*
+      ONLY slash while
+      holding mouse button.
+    */
+
+    if(
+      mouseDown &&
+      running
+    ){
 
       bladeTrail.push({
         x:mouseX,
@@ -1388,13 +2105,15 @@ canvas.addEventListener(
         mouseX,
         mouseY
       );
+
     }
+
   }
 );
 
 
 /* =========================
-   TOUCH
+   TOUCH CONTROLS
 ========================= */
 
 canvas.addEventListener(
@@ -1403,11 +2122,16 @@ canvas.addEventListener(
 
     e.preventDefault();
 
+
     const t =
       e.touches[0];
 
-    mouseX=t.clientX;
-    mouseY=t.clientY;
+
+    mouseX =
+      t.clientX;
+
+    mouseY =
+      t.clientY;
 
 
     bladeTrail.push({
@@ -1421,8 +2145,11 @@ canvas.addEventListener(
       mouseX,
       mouseY
     );
+
   },
-  {passive:false}
+  {
+    passive:false
+  }
 );
 
 
@@ -1432,11 +2159,16 @@ canvas.addEventListener(
 
     e.preventDefault();
 
+
     const t =
       e.touches[0];
 
-    mouseX=t.clientX;
-    mouseY=t.clientY;
+
+    mouseX =
+      t.clientX;
+
+    mouseY =
+      t.clientY;
 
 
     bladeTrail.push({
@@ -1450,8 +2182,11 @@ canvas.addEventListener(
       mouseX,
       mouseY
     );
+
   },
-  {passive:false}
+  {
+    passive:false
+  }
 );
 
 
@@ -1461,52 +2196,88 @@ canvas.addEventListener(
 
 function startGame(){
 
+  /*
+    CLEAR EVERYTHING
+  */
+
   fruits=[];
+
+  slicedFruits=[];
+
   particles=[];
+
   bladeTrail=[];
 
+
+  /*
+    RESET GAME
+  */
+
   score=0;
+
   lives=3;
 
   combo=0;
+
   comboTimer=0;
 
   spawnTimer=0;
 
+
   running=true;
 
 
-  document.getElementById("score")
-    .textContent=
+  /*
+    RESET UI
+  */
+
+  document
+    .getElementById("score")
+    .textContent =
     "Score: 0";
 
 
   updateLives();
 
 
-  document.getElementById(
-    "startScreen"
-  ).classList.add(
-    "hidden"
-  );
+  document
+    .getElementById("combo")
+    .classList.remove(
+      "show"
+    );
 
 
-  document.getElementById(
-    "gameOver"
-  ).style.display="none";
+  document
+    .getElementById("startScreen")
+    .classList.add(
+      "hidden"
+    );
 
 
-  lastTime=
+  document
+    .getElementById("gameOver")
+    .style.display =
+    "none";
+
+
+  lastTime =
     performance.now();
+
 }
 
 
-document.getElementById(
-  "startButton"
-).addEventListener(
-  "click",
-  startGame
-);
+/* =========================
+   START BUTTON
+========================= */
+
+document
+  .getElementById(
+    "startButton"
+  )
+  .addEventListener(
+    "click",
+    startGame
+  );
 
 
 /* =========================
@@ -1515,75 +2286,127 @@ document.getElementById(
 
 function endGame(){
 
+  /*
+    Prevent duplicate
+    game-over screens.
+  */
+
   if(
-    document.getElementById(
-      "gameOver"
-    ).style.display==="flex"
-  )
+    document
+      .getElementById(
+        "gameOver"
+      )
+      .style.display ===
+    "flex"
+  ){
+
     return;
+
+  }
 
 
   running=false;
 
 
+  /*
+    HIGH SCORE
+
+    This ONLY updates
+    the high score.
+
+    It NEVER causes
+    game over.
+  */
+
   const isNewHigh =
-    score>highScore;
+    score >
+    highScore;
 
 
-  if(isNewHigh){
+  if(
+    isNewHigh
+  ){
 
-    highScore=score;
+    highScore =
+      score;
 
 
     localStorage.setItem(
       "fruitNinjaHighScore",
       highScore
     );
+
   }
 
 
-  document.getElementById(
-    "finalScore"
-  ).textContent=
-    "Score: "+score;
+  /*
+    GAME OVER SCREEN
+  */
+
+  document
+    .getElementById(
+      "finalScore"
+    )
+    .textContent =
+    "Score: " +
+    score;
 
 
-  document.getElementById(
-    "finalBest"
-  ).textContent=
-    "Best: "+highScore;
+  document
+    .getElementById(
+      "finalBest"
+    )
+    .textContent =
+    "Best: " +
+    highScore;
 
 
-  document.getElementById(
-    "newHigh"
-  ).style.display=
+  document
+    .getElementById(
+      "newHigh"
+    )
+    .style.display =
     isNewHigh
     ? "block"
     : "none";
 
 
-  document.getElementById(
-    "gameOver"
-  ).style.display="flex";
+  document
+    .getElementById(
+      "gameOver"
+    )
+    .style.display =
+    "flex";
+
 }
 
 
-document.getElementById(
-  "restartButton"
-).addEventListener(
-  "click",
-  startGame
-);
+/* =========================
+   RESTART BUTTON
+========================= */
+
+document
+  .getElementById(
+    "restartButton"
+  )
+  .addEventListener(
+    "click",
+    startGame
+  );
 
 
 /* =========================
-   PREVENT SCROLL
+   PREVENT MOBILE SCROLL
 ========================= */
 
 document.body.addEventListener(
   "touchmove",
-  e=>e.preventDefault(),
-  {passive:false}
+  e=>{
+    e.preventDefault();
+  },
+  {
+    passive:false
+  }
 );
 
 </script>
