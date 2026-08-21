@@ -3,90 +3,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fruit Ninja Clone</title>
+<title>Fruit Ninja</title>
 
 <style>
-
-body{
-  margin:0;
-  overflow:hidden;
-  font-family:Arial;
+*{
+  box-sizing:border-box;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
 }
 
-/* 🌳 WOOD BACKGROUND */
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#111;
+}
+
 body::before{
   content:"";
   position:fixed;
   inset:0;
-
   background:
-    linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.6)),
-    url("https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1500&q=80");
-
+    linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.65)),
+    url("https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=2000&q=80");
   background-size:cover;
   background-position:center;
-
   z-index:-2;
 }
 
-/* DARK OVERLAY */
 body::after{
   content:"";
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.55);
+  background:rgba(0,0,0,.35);
   z-index:-1;
 }
 
-#score{
-  position:fixed;
-  top:10px;
-  left:10px;
-  color:white;
-  font-size:24px;
-  text-shadow:0 0 10px black;
+canvas{
+  display:block;
+  width:100%;
+  height:100%;
+  cursor:none;
 }
 
-#failScreen{
+#hud{
+  position:fixed;
+  top:15px;
+  left:20px;
+  right:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  color:white;
+  pointer-events:none;
+  z-index:5;
+}
+
+#score{
+  font-size:32px;
+  font-weight:bold;
+  text-shadow:0 3px 8px #000;
+}
+
+#highScore{
+  font-size:16px;
+  opacity:.85;
+  margin-top:3px;
+}
+
+#lives{
+  font-size:30px;
+  letter-spacing:5px;
+  text-shadow:0 3px 8px #000;
+}
+
+#combo{
+  position:fixed;
+  top:100px;
+  left:50%;
+  transform:translateX(-50%) scale(.5);
+  color:#fff;
+  font-size:42px;
+  font-weight:bold;
+  font-style:italic;
+  text-shadow:
+    0 0 8px #ffb300,
+    0 3px 8px #000;
+  opacity:0;
+  pointer-events:none;
+  z-index:10;
+  transition:transform .15s,opacity .15s;
+}
+
+#combo.show{
+  opacity:1;
+  transform:translateX(-50%) scale(1);
+}
+
+#gameOver{
   position:fixed;
   inset:0;
   display:none;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,0.85);
+  background:rgba(0,0,0,.78);
   color:white;
+  z-index:20;
+  text-align:center;
 }
 
-#failScreen h1{
-  font-size:70px;
-  text-shadow:0 0 20px red;
+#gameOver h1{
+  margin:0 0 10px;
+  font-size:72px;
+  letter-spacing:4px;
+  text-shadow:0 0 20px #ff2222;
+}
+
+#gameOver p{
+  font-size:25px;
+  margin:8px;
+}
+
+#newHigh{
+  color:#ffd43b;
+  font-size:25px;
+  font-weight:bold;
+  display:none;
 }
 
 button{
-  padding:15px 30px;
-  font-size:20px;
-  border:none;
-  border-radius:10px;
+  margin-top:25px;
+  padding:15px 38px;
+  border:0;
+  border-radius:12px;
+  background:linear-gradient(#ffcf33,#ff941f);
+  color:#321500;
+  font-size:22px;
+  font-weight:bold;
   cursor:pointer;
-  margin-top:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,.4);
 }
 
-canvas{
-  display:block;
+button:hover{
+  transform:scale(1.05);
 }
 
+#startScreen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.55);
+  color:white;
+  z-index:15;
+  text-align:center;
+}
+
+#startScreen h1{
+  font-size:80px;
+  margin:0;
+  font-style:italic;
+  text-shadow:0 0 25px orange,0 5px 10px #000;
+}
+
+#startScreen p{
+  font-size:20px;
+  opacity:.9;
+}
+
+.hidden{
+  display:none !important;
+}
 </style>
 </head>
 
 <body>
 
-<div id="score">Score: 0</div>
+<div id="hud">
+  <div>
+    <div id="score">Score: 0</div>
+    <div id="highScore">Best: 0</div>
+  </div>
 
-<div id="failScreen">
+  <div id="lives">❤️❤️❤️</div>
+</div>
+
+<div id="combo"></div>
+
+<div id="startScreen">
+  <h1>FRUIT NINJA</h1>
+  <p>Slice the fruit. Avoid the bombs.</p>
+  <p>Push down and move your mouse or finger to slash.</p>
+  <button id="startButton">START GAME</button>
+</div>
+
+<div id="gameOver">
   <h1>GAME OVER</h1>
-  <div id="finalScore"></div>
-  <button onclick="location.reload()">Play Again</button>
+  <p id="finalScore">Score: 0</p>
+  <p id="finalBest">Best: 0</p>
+  <p id="newHigh">NEW HIGH SCORE!</p>
+  <button id="restartButton">PLAY AGAIN</button>
 </div>
 
 <canvas id="game"></canvas>
@@ -96,151 +218,1373 @@ canvas{
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
-
 let fruits = [];
 let particles = [];
+let bladeTrail = [];
+
 let score = 0;
-let running = true;
+let lives = 3;
+let running = false;
 
-const fruitTypes = ["🍎","🍊","🍌","🍉","🍇","🍍"];
+let combo = 0;
+let comboTimer = 0;
 
-/* 🍉 FRUIT */
+let spawnTimer = 0;
+let lastTime = performance.now();
+
+let mouseX = 0;
+let mouseY = 0;
+
+let highScore =
+  Number(localStorage.getItem("fruitNinjaHighScore")) || 0;
+
+document.getElementById("highScore").textContent =
+  "Best: " + highScore;
+
+
+/* =========================
+   RESIZE
+========================= */
+
+function resize(){
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resize();
+
+window.addEventListener("resize",resize);
+
+
+/* =========================
+   FRUIT DATA
+========================= */
+
+const fruitTypes = [
+
+  {
+    emoji:"🍎",
+    color:"#e53935"
+  },
+
+  {
+    emoji:"🍊",
+    color:"#ff9800"
+  },
+
+  {
+    emoji:"🍌",
+    color:"#ffd600"
+  },
+
+  {
+    emoji:"🍉",
+    color:"#43a047"
+  },
+
+  {
+    emoji:"🍇",
+    color:"#8e44ad"
+  },
+
+  {
+    emoji:"🍍",
+    color:"#f5c542"
+  },
+
+  {
+    emoji:"🥝",
+    color:"#7cb342"
+  },
+
+  {
+    emoji:"🍑",
+    color:"#ff8a65"
+  }
+];
+
+
+/* =========================
+   FRUIT
+========================= */
+
 class Fruit{
+
   constructor(){
 
-    this.x = canvas.width * (0.2 + Math.random()*0.6);
-    this.y = canvas.height + 60;
+    /*
+      RANDOM START POSITION
+      Fruits can start anywhere
+      across the lower portion
+      of the screen.
+    */
 
-    this.size = 65;
+    this.x =
+      canvas.width *
+      (0.08 + Math.random() * 0.84);
 
-    /* 🔥 SLOWER SPEED */
-    this.speedY = -(5 + Math.random()*3);
-    this.speedX = (Math.random()-0.5)*2;
+    this.y =
+      canvas.height +
+      60 +
+      Math.random() * 100;
 
-    this.type = fruitTypes[Math.floor(Math.random()*fruitTypes.length)];
+
+    /*
+      RANDOM SIZE
+    */
+
+    this.size =
+      58 +
+      Math.random() * 18;
+
+
+    /*
+      RANDOM HORIZONTAL SPEED
+
+      Some fruits go left.
+      Some go right.
+      Some barely move sideways.
+    */
+
+    this.vx =
+      (Math.random() - 0.5) *
+      (3 + Math.random() * 5);
+
+
+    /*
+      MUCH HIGHER RANDOM LAUNCH
+
+      Every fruit gets a different
+      upward speed.
+    */
+
+    this.vy =
+      -(13 +
+        Math.random() * 7 +
+        difficulty() * 0.15);
+
+
+    /*
+      RANDOM ROTATION
+    */
+
+    this.rotation =
+      Math.random() * Math.PI * 2;
+
+    this.rotationSpeed =
+      (Math.random() - 0.5) *
+      (0.05 + Math.random() * 0.08);
+
+
+    /*
+      RANDOM FRUIT
+    */
+
+    this.type =
+      fruitTypes[
+        Math.floor(
+          Math.random() *
+          fruitTypes.length
+        )
+      ];
+
     this.sliced = false;
+    this.dead = false;
   }
 
-  update(){
-    this.x += this.speedX;
-    this.y += this.speedY;
 
-    this.speedY += 0.06; // weaker gravity = slower fall
+  update(dt){
+
+    this.x += this.vx * dt;
+
+    this.y += this.vy * dt;
+
+
+    /*
+      GRAVITY
+    */
+
+    this.vy += 0.38 * dt;
+
+
+    this.rotation +=
+      this.rotationSpeed * dt;
+
+
+    /*
+      KEEP FRUIT ON SCREEN
+    */
+
+    if(this.x < this.size){
+
+      this.x = this.size;
+
+      this.vx *= -1;
+    }
+
+    if(
+      this.x >
+      canvas.width - this.size
+    ){
+
+      this.x =
+        canvas.width - this.size;
+
+      this.vx *= -1;
+    }
   }
+
 
   draw(){
-    ctx.font = this.size + "px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.shadowColor = "white";
-    ctx.shadowBlur = 20;
-    ctx.fillText(this.type, this.x, this.y);
-    ctx.shadowBlur = 0;
+
+    ctx.save();
+
+    ctx.translate(
+      this.x,
+      this.y
+    );
+
+    ctx.rotate(
+      this.rotation
+    );
+
+    ctx.font =
+      this.size + "px Arial";
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    ctx.shadowColor =
+      "rgba(255,255,255,.5)";
+
+    ctx.shadowBlur=10;
+
+    ctx.fillText(
+      this.type.emoji,
+      0,
+      0
+    );
+
+    ctx.restore();
   }
 }
 
-/* PARTICLES */
-class Particle{
-  constructor(x,y){
+
+/* =========================
+   BOMB
+========================= */
+
+class Bomb{
+
+  constructor(){
+
+    this.x =
+      canvas.width *
+      (.08 + Math.random()*.84);
+
+    this.y =
+      canvas.height +
+      60 +
+      Math.random()*100;
+
+    this.size =
+      55 +
+      Math.random()*12;
+
+    this.vx =
+      (Math.random()-.5) *
+      (3+Math.random()*5);
+
+    /*
+      BOMBS ALSO LAUNCH HIGH
+    */
+
+    this.vy =
+      -(13 +
+        Math.random()*7 +
+        difficulty()*.15);
+
+    this.rotation =
+      Math.random()*Math.PI*2;
+
+    this.rotationSpeed =
+      (Math.random()-.5)*.1;
+
+    this.dead=false;
+  }
+
+
+  update(dt){
+
+    this.x +=
+      this.vx*dt;
+
+    this.y +=
+      this.vy*dt;
+
+    this.vy +=
+      .38*dt;
+
+    this.rotation +=
+      this.rotationSpeed*dt;
+
+
+    if(this.x < this.size){
+
+      this.x=this.size;
+
+      this.vx*=-1;
+    }
+
+    if(
+      this.x >
+      canvas.width-this.size
+    ){
+
+      this.x =
+        canvas.width-this.size;
+
+      this.vx*=-1;
+    }
+  }
+
+
+  draw(){
+
+    ctx.save();
+
+    ctx.translate(
+      this.x,
+      this.y
+    );
+
+    ctx.rotate(
+      this.rotation
+    );
+
+    ctx.font =
+      this.size+"px Arial";
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    ctx.shadowColor="red";
+    ctx.shadowBlur=15;
+
+    ctx.fillText(
+      "💣",
+      0,
+      0
+    );
+
+    ctx.restore();
+  }
+}
+
+
+/* =========================
+   FRUIT HALF
+========================= */
+
+class FruitHalf{
+
+  constructor(
+    x,
+    y,
+    emoji,
+    side
+  ){
+
     this.x=x;
     this.y=y;
+
+    this.emoji=emoji;
+
+    this.vx =
+      side *
+      (2 + Math.random()*3);
+
+    this.vy =
+      -2 -
+      Math.random()*3;
+
+    this.rotation =
+      Math.random()*Math.PI;
+
+    this.rotationSpeed =
+      side*.08;
+
     this.life=1;
-    this.vx=(Math.random()-0.5)*6;
-    this.vy=(Math.random()-0.5)*6;
   }
 
-  update(){
-    this.x+=this.vx;
-    this.y+=this.vy;
-    this.life-=0.02;
+
+  update(dt){
+
+    this.x +=
+      this.vx*dt;
+
+    this.y +=
+      this.vy*dt;
+
+    this.vy +=
+      .3*dt;
+
+    this.rotation +=
+      this.rotationSpeed*dt;
+
+    this.life -=
+      .018*dt;
   }
+
 
   draw(){
-    ctx.globalAlpha=this.life;
-    ctx.fillStyle="orange";
-    ctx.fillRect(this.x,this.y,4,4);
-    ctx.globalAlpha=1;
+
+    ctx.save();
+
+    ctx.globalAlpha =
+      Math.max(
+        this.life,
+        0
+      );
+
+    ctx.translate(
+      this.x,
+      this.y
+    );
+
+    ctx.rotate(
+      this.rotation
+    );
+
+    ctx.font="55px Arial";
+
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    ctx.fillText(
+      this.emoji,
+      0,
+      0
+    );
+
+    ctx.restore();
   }
 }
 
-/* SPAWN SLOWER */
-setInterval(()=>{
-  if(running){
-    fruits.push(new Fruit());
+
+/* =========================
+   PARTICLE
+========================= */
+
+class Particle{
+
+  constructor(
+    x,
+    y,
+    color
+  ){
+
+    this.x=x;
+    this.y=y;
+
+    this.vx =
+      (Math.random()-.5)*10;
+
+    this.vy =
+      (Math.random()-.5)*10;
+
+    this.life=1;
+
+    this.size =
+      2+Math.random()*5;
+
+    this.color=color;
   }
-},900);
 
-/* LOOP */
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  fruits.forEach((f,i)=>{
-    f.update();
-    f.draw();
+  update(dt){
 
-    /* ❌ STOP GAME ONLY IF THEY FALL TOO LOW */
-    if(f.y > canvas.height + 120){
-      endGame();
-    }
+    this.x +=
+      this.vx*dt;
 
-    if(f.sliced){
-      fruits.splice(i,1);
-    }
-  });
+    this.y +=
+      this.vy*dt;
 
-  particles.forEach((p,i)=>{
-    p.update();
-    p.draw();
-    if(p.life<=0) particles.splice(i,1);
-  });
+    this.vy +=
+      .2*dt;
 
-  requestAnimationFrame(animate);
+    this.life -=
+      .035*dt;
+  }
+
+
+  draw(){
+
+    ctx.save();
+
+    ctx.globalAlpha =
+      Math.max(
+        this.life,
+        0
+      );
+
+    ctx.fillStyle =
+      this.color;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      this.x,
+      this.y,
+      this.size,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.restore();
+  }
 }
 
-animate();
 
-/* SLICE */
-function slice(x,y){
+/* =========================
+   PARTICLES
+========================= */
 
-  fruits.forEach((f,i)=>{
+function createParticles(fruit){
 
-    let dx = f.x - x;
-    let dy = f.y - y;
-    let dist = Math.sqrt(dx*dx + dy*dy);
+  for(
+    let i=0;
+    i<25;
+    i++
+  ){
 
-    if(dist < f.size/2){
+    particles.push(
+      new Particle(
+        fruit.x,
+        fruit.y,
+        fruit.type.color
+      )
+    );
+  }
+}
 
-      score++;
-      document.getElementById("score").innerText = "Score: " + score;
 
-      for(let i=0;i<12;i++){
-        particles.push(new Particle(f.x,f.y));
+/* =========================
+   DIFFICULTY
+========================= */
+
+function difficulty(){
+
+  return Math.floor(
+    score/10
+  );
+}
+
+
+/* =========================
+   SPAWN
+========================= */
+
+function spawnWave(){
+
+  let amount =
+    Math.random() <
+    Math.min(
+      .1 +
+      difficulty()*.015,
+      .45
+    )
+    ? 2
+    : 1;
+
+
+  for(
+    let i=0;
+    i<amount;
+    i++
+  ){
+
+    if(
+      Math.random() <
+      Math.min(
+        .08 +
+        difficulty()*.005,
+        .18
+      )
+    ){
+
+      fruits.push(
+        new Bomb()
+      );
+
+    }else{
+
+      fruits.push(
+        new Fruit()
+      );
+    }
+  }
+}
+
+
+/* =========================
+   SLICE
+========================= */
+
+function slice(
+  x,
+  y
+){
+
+  if(!running)
+    return;
+
+  let slicedSomething=false;
+
+
+  for(
+    let i=fruits.length-1;
+    i>=0;
+    i--
+  ){
+
+    const f =
+      fruits[i];
+
+    if(f.dead)
+      continue;
+
+
+    const dx =
+      f.x-x;
+
+    const dy =
+      f.y-y;
+
+    const distance =
+      Math.sqrt(
+        dx*dx+
+        dy*dy
+      );
+
+
+    if(
+      distance <
+      f.size*.55
+    ){
+
+      /*
+        BOMB
+      */
+
+      if(
+        f instanceof Bomb
+      ){
+
+        bombHit();
+
+        return;
       }
 
-      f.sliced = true;
+
+      /*
+        FRUIT
+      */
+
+      f.dead=true;
+
+      score++;
+
+      slicedSomething=true;
+
+      document.getElementById("score")
+        .textContent =
+        "Score: " + score;
+
+
+      createParticles(f);
+
+
+      /*
+        CREATE TWO HALVES
+      */
+
+      fruits.push(
+        new FruitHalf(
+          f.x,
+          f.y,
+          f.type.emoji,
+          -1
+        )
+      );
+
+      fruits.push(
+        new FruitHalf(
+          f.x,
+          f.y,
+          f.type.emoji,
+          1
+        )
+      );
+
+
+      updateCombo();
+
+      fruits.splice(
+        i,
+        1
+      );
     }
-  });
+  }
+
+
+  if(slicedSomething){
+
+    bladeTrail.push({
+      x:x,
+      y:y,
+      life:1
+    });
+  }
 }
 
-/* CONTROLS */
-window.addEventListener("mousemove",(e)=>{
-  if(running) slice(e.clientX,e.clientY);
-});
 
-window.addEventListener("touchmove",(e)=>{
-  let t = e.touches[0];
-  if(running) slice(t.clientX,t.clientY);
-});
+/* =========================
+   COMBO
+========================= */
 
-/* GAME OVER */
+function updateCombo(){
+
+  combo++;
+
+  comboTimer=70;
+
+
+  if(combo>=2){
+
+    const multiplier =
+      Math.min(
+        combo,
+        5
+      );
+
+    const bonus =
+      multiplier-1;
+
+    score +=
+      bonus;
+
+
+    document.getElementById("score")
+      .textContent =
+      "Score: " + score;
+
+
+    showCombo(
+      combo+
+      "x COMBO!"
+    );
+  }
+}
+
+
+function showCombo(text){
+
+  const element =
+    document.getElementById(
+      "combo"
+    );
+
+  element.textContent=text;
+
+  element.classList.remove(
+    "show"
+  );
+
+  void element.offsetWidth;
+
+  element.classList.add(
+    "show"
+  );
+}
+
+
+/* =========================
+   BOMB
+========================= */
+
+function bombHit(){
+
+  running=false;
+
+
+  for(
+    let i=0;
+    i<60;
+    i++
+  ){
+
+    particles.push(
+      new Particle(
+        mouseX,
+        mouseY,
+        "orange"
+      )
+    );
+  }
+
+
+  setTimeout(
+    endGame,
+    300
+  );
+}
+
+
+/* =========================
+   LIVES
+========================= */
+
+function loseLife(){
+
+  lives--;
+
+  updateLives();
+
+
+  if(lives<=0){
+
+    endGame();
+  }
+}
+
+
+function updateLives(){
+
+  let text="";
+
+
+  for(
+    let i=0;
+    i<3;
+    i++
+  ){
+
+    text +=
+      i<lives
+      ? "❤️"
+      : "🖤";
+  }
+
+
+  document.getElementById("lives")
+    .textContent=text;
+}
+
+
+/* =========================
+   BLADE
+========================= */
+
+function drawBlade(){
+
+  if(
+    bladeTrail.length<2
+  )
+    return;
+
+
+  ctx.save();
+
+  ctx.lineWidth=5;
+
+  ctx.lineCap="round";
+
+  ctx.shadowColor="white";
+
+  ctx.shadowBlur=15;
+
+  ctx.beginPath();
+
+
+  for(
+    let i=0;
+    i<bladeTrail.length;
+    i++
+  ){
+
+    const p =
+      bladeTrail[i];
+
+
+    if(i===0){
+
+      ctx.moveTo(
+        p.x,
+        p.y
+      );
+
+    }else{
+
+      ctx.lineTo(
+        p.x,
+        p.y
+      );
+    }
+  }
+
+
+  ctx.strokeStyle =
+    "rgba(255,255,255,.9)";
+
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
+/* =========================
+   BLADE UPDATE
+========================= */
+
+function updateBlade(dt){
+
+  for(
+    let i=bladeTrail.length-1;
+    i>=0;
+    i--
+  ){
+
+    bladeTrail[i].life -=
+      .08*dt;
+
+
+    if(
+      bladeTrail[i].life<=0
+    ){
+
+      bladeTrail.splice(
+        i,
+        1
+      );
+    }
+  }
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function animate(now){
+
+  const dt =
+    Math.min(
+      (now-lastTime)/16.67,
+      2
+    );
+
+  lastTime=now;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  if(running){
+
+    spawnTimer -= dt;
+
+
+    const spawnRate =
+      Math.max(
+        48,
+        70 -
+        difficulty()*3
+      );
+
+
+    if(
+      spawnTimer<=0
+    ){
+
+      spawnWave();
+
+      spawnTimer =
+        spawnRate;
+    }
+
+
+    /*
+      FRUITS
+    */
+
+    for(
+      let i=fruits.length-1;
+      i>=0;
+      i--
+    ){
+
+      const f =
+        fruits[i];
+
+
+      f.update(dt);
+      f.draw();
+
+
+      /*
+        Only normal fruits
+        cost a life when missed.
+      */
+
+      if(
+        f.y >
+        canvas.height+130
+      ){
+
+        fruits.splice(
+          i,
+          1
+        );
+
+
+        if(
+          f instanceof Fruit
+        ){
+
+          loseLife();
+        }
+      }
+    }
+
+
+    /*
+      PARTICLES
+    */
+
+    for(
+      let i=particles.length-1;
+      i>=0;
+      i--
+    ){
+
+      const p =
+        particles[i];
+
+      p.update(dt);
+      p.draw();
+
+
+      if(
+        p.life<=0
+      ){
+
+        particles.splice(
+          i,
+          1
+        );
+      }
+    }
+
+
+    /*
+      COMBO
+    */
+
+    if(
+      comboTimer>0
+    ){
+
+      comboTimer-=dt;
+
+    }else{
+
+      combo=0;
+
+      document
+        .getElementById("combo")
+        .classList.remove(
+          "show"
+        );
+    }
+
+
+    updateBlade(dt);
+  }
+
+
+  drawBlade();
+
+
+  requestAnimationFrame(
+    animate
+  );
+}
+
+
+requestAnimationFrame(
+  animate
+);
+
+
+/* =========================
+   MOUSE
+========================= */
+
+let mouseDown=false;
+
+
+canvas.addEventListener(
+  "mousedown",
+  e=>{
+
+    mouseDown=true;
+
+    mouseX=e.clientX;
+    mouseY=e.clientY;
+
+    slice(
+      mouseX,
+      mouseY
+    );
+  }
+);
+
+
+canvas.addEventListener(
+  "mouseup",
+  ()=>{
+    mouseDown=false;
+  }
+);
+
+
+canvas.addEventListener(
+  "mousemove",
+  e=>{
+
+    mouseX=e.clientX;
+    mouseY=e.clientY;
+
+
+    if(mouseDown){
+
+      bladeTrail.push({
+        x:mouseX,
+        y:mouseY,
+        life:1
+      });
+
+
+      slice(
+        mouseX,
+        mouseY
+      );
+    }
+  }
+);
+
+
+/* =========================
+   TOUCH
+========================= */
+
+canvas.addEventListener(
+  "touchstart",
+  e=>{
+
+    e.preventDefault();
+
+    const t =
+      e.touches[0];
+
+    mouseX=t.clientX;
+    mouseY=t.clientY;
+
+
+    bladeTrail.push({
+      x:mouseX,
+      y:mouseY,
+      life:1
+    });
+
+
+    slice(
+      mouseX,
+      mouseY
+    );
+  },
+  {passive:false}
+);
+
+
+canvas.addEventListener(
+  "touchmove",
+  e=>{
+
+    e.preventDefault();
+
+    const t =
+      e.touches[0];
+
+    mouseX=t.clientX;
+    mouseY=t.clientY;
+
+
+    bladeTrail.push({
+      x:mouseX,
+      y:mouseY,
+      life:1
+    });
+
+
+    slice(
+      mouseX,
+      mouseY
+    );
+  },
+  {passive:false}
+);
+
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame(){
+
+  fruits=[];
+  particles=[];
+  bladeTrail=[];
+
+  score=0;
+  lives=3;
+
+  combo=0;
+  comboTimer=0;
+
+  spawnTimer=0;
+
+  running=true;
+
+
+  document.getElementById("score")
+    .textContent=
+    "Score: 0";
+
+
+  updateLives();
+
+
+  document.getElementById(
+    "startScreen"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "gameOver"
+  ).style.display="none";
+
+
+  lastTime=
+    performance.now();
+}
+
+
+document.getElementById(
+  "startButton"
+).addEventListener(
+  "click",
+  startGame
+);
+
+
+/* =========================
+   GAME OVER
+========================= */
+
 function endGame(){
-  running = false;
-  document.getElementById("failScreen").style.display="flex";
-  document.getElementById("finalScore").innerText =
-  "Your Score: " + score;
+
+  if(
+    document.getElementById(
+      "gameOver"
+    ).style.display==="flex"
+  )
+    return;
+
+
+  running=false;
+
+
+  const isNewHigh =
+    score>highScore;
+
+
+  if(isNewHigh){
+
+    highScore=score;
+
+
+    localStorage.setItem(
+      "fruitNinjaHighScore",
+      highScore
+    );
+  }
+
+
+  document.getElementById(
+    "finalScore"
+  ).textContent=
+    "Score: "+score;
+
+
+  document.getElementById(
+    "finalBest"
+  ).textContent=
+    "Best: "+highScore;
+
+
+  document.getElementById(
+    "newHigh"
+  ).style.display=
+    isNewHigh
+    ? "block"
+    : "none";
+
+
+  document.getElementById(
+    "gameOver"
+  ).style.display="flex";
 }
+
+
+document.getElementById(
+  "restartButton"
+).addEventListener(
+  "click",
+  startGame
+);
+
+
+/* =========================
+   PREVENT SCROLL
+========================= */
+
+document.body.addEventListener(
+  "touchmove",
+  e=>e.preventDefault(),
+  {passive:false}
+);
 
 </script>
 
