@@ -1,96 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
-<title>Fruit Ninja</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fruit Slice</title>
 
 <style>
 
 *{
-  box-sizing:border-box;
-
-  user-select:none;
-  -webkit-user-select:none;
-
-  -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+    user-select:none;
+    -webkit-user-select:none;
 }
 
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
-html,
 body{
-
-  margin:0;
-
-  width:100%;
-  height:100%;
-
-  overflow:hidden;
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  background:#111;
+    cursor:none;
+    background:#111;
 }
-
-
-body::before{
-
-  content:"";
-
-  position:fixed;
-
-  inset:0;
-
-  background:
-
-    linear-gradient(
-      rgba(0,0,0,.25),
-      rgba(0,0,0,.65)
-    ),
-
-    url("https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=2000&q=80");
-
-  background-size:cover;
-
-  background-position:center;
-
-  z-index:-2;
-}
-
-
-body::after{
-
-  content:"";
-
-  position:fixed;
-
-  inset:0;
-
-  background:
-    rgba(0,0,0,.35);
-
-  z-index:-1;
-}
-
 
 canvas{
-
-  display:block;
-
-  width:100%;
-  height:100%;
-
-  cursor:none;
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
 }
 
 
@@ -99,57 +39,34 @@ canvas{
 ========================= */
 
 #hud{
+    position:fixed;
+    top:15px;
+    left:20px;
+    right:20px;
+    z-index:5;
 
-  position:fixed;
+    display:flex;
+    justify-content:space-between;
 
-  top:15px;
-
-  left:20px;
-  right:20px;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:flex-start;
-
-  color:white;
-
-  pointer-events:none;
-
-  z-index:5;
+    pointer-events:none;
+    color:white;
 }
-
 
 #score{
-
-  font-size:32px;
-
-  font-weight:bold;
-
-  text-shadow:
-    0 3px 8px #000;
+    font-size:36px;
+    font-weight:bold;
+    text-shadow:0 3px 8px black;
 }
 
-
-#highScore{
-
-  font-size:16px;
-
-  opacity:.85;
-
-  margin-top:3px;
+#best{
+    font-size:16px;
+    opacity:.85;
+    text-shadow:0 2px 5px black;
 }
-
 
 #lives{
-
-  font-size:30px;
-
-  letter-spacing:5px;
-
-  text-shadow:
-    0 3px 8px #000;
+    font-size:28px;
+    letter-spacing:3px;
 }
 
 
@@ -158,99 +75,269 @@ canvas{
 ========================= */
 
 #combo{
+    position:fixed;
+    left:50%;
+    top:105px;
 
-  position:fixed;
+    transform:translateX(-50%) scale(.5);
 
-  top:100px;
+    opacity:0;
 
-  left:50%;
+    color:white;
+    font-size:42px;
+    font-weight:bold;
+    font-style:italic;
 
-  transform:
-    translateX(-50%)
-    scale(.5);
+    text-shadow:
+        0 0 10px #ffb300,
+        0 4px 10px black;
 
-  color:white;
+    pointer-events:none;
+    z-index:10;
 
-  font-size:42px;
-
-  font-weight:bold;
-
-  font-style:italic;
-
-  text-shadow:
-    0 0 8px #ffb300,
-    0 3px 8px #000;
-
-  opacity:0;
-
-  pointer-events:none;
-
-  z-index:10;
-
-  transition:
-    transform .15s,
-    opacity .15s;
+    transition:
+        opacity .12s,
+        transform .12s;
 }
 
-
 #combo.show{
-
-  opacity:1;
-
-  transform:
-    translateX(-50%)
-    scale(1);
+    opacity:1;
+    transform:translateX(-50%) scale(1);
 }
 
 
 /* =========================
-   START SCREEN
+   OVERLAYS
 ========================= */
 
-#startScreen{
+.overlay{
+    position:fixed;
+    inset:0;
 
-  position:fixed;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
 
-  inset:0;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(40,40,40,.3),
+            rgba(0,0,0,.88)
+        );
 
-  display:flex;
+    color:white;
 
-  flex-direction:column;
+    z-index:20;
 
-  justify-content:center;
+    text-align:center;
+}
 
-  align-items:center;
-
-  background:
-    rgba(0,0,0,.55);
-
-  color:white;
-
-  z-index:15;
-
-  text-align:center;
+.hidden{
+    display:none !important;
 }
 
 
-#startScreen h1{
+/* =========================
+   LOGO
+========================= */
 
-  font-size:80px;
+.logo{
+    font-size:clamp(48px,8vw,82px);
+    font-weight:900;
+    font-style:italic;
+    letter-spacing:-5px;
 
-  margin:0;
+    text-shadow:
+        0 5px 0 #7a2600,
+        0 0 25px #ff8c00;
+}
 
-  font-style:italic;
-
-  text-shadow:
-    0 0 25px orange,
-    0 5px 10px #000;
+.subtitle{
+    font-size:18px;
+    opacity:.8;
+    margin-top:-5px;
 }
 
 
-#startScreen p{
+/* =========================
+   BUTTONS
+========================= */
 
-  font-size:20px;
+button{
+    border:0;
+    border-radius:12px;
 
-  opacity:.9;
+    padding:14px 38px;
+
+    margin-top:18px;
+
+    font-size:20px;
+    font-weight:bold;
+
+    color:#321700;
+
+    background:
+        linear-gradient(
+            #ffd83d,
+            #ff941c
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.5);
+
+    cursor:pointer;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.secondary{
+    background:
+        linear-gradient(
+            #eee,
+            #aaa
+        );
+}
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+#settingsScreen{
+    position:fixed;
+    inset:0;
+
+    z-index:100;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.88);
+
+    /* FIX: normal cursor is always visible */
+    cursor:auto;
+}
+
+#settingsScreen,
+#settingsScreen *{
+    /* FIX: cursor stays visible everywhere */
+    cursor:auto;
+}
+
+
+/* SETTINGS BOX */
+
+.panel{
+    position:relative;
+
+    width:min(520px,90vw);
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    padding:32px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            rgba(30,30,30,.98),
+            rgba(15,15,15,.98)
+        );
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.8);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+}
+
+
+/* SETTINGS X */
+
+.closeSettingsX{
+
+    position:absolute;
+
+    top:12px;
+    right:15px;
+
+    width:42px;
+    height:42px;
+
+    margin:0;
+
+    padding:0;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+
+    color:white;
+
+    background:
+        rgba(255,255,255,.1);
+
+    box-shadow:none;
+
+}
+
+.closeSettingsX:hover{
+
+    background:
+        rgba(255,70,70,.8);
+
+    transform:scale(1.08);
+
+}
+
+
+.panel h2{
+    margin-top:0;
+    font-size:32px;
+    text-align:center;
+}
+
+.setting{
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:13px 0;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.1);
+
+    font-size:17px;
+}
+
+input[type="range"]{
+    width:150px;
+}
+
+input[type="checkbox"]{
+    width:21px;
+    height:21px;
+}
+
+
+/* =========================
+   PAUSE
+========================= */
+
+.pauseTitle{
+    font-size:clamp(48px,8vw,70px);
+    font-weight:bold;
 }
 
 
@@ -258,115 +345,30 @@ canvas{
    GAME OVER
 ========================= */
 
-#gameOver{
+.gameOverTitle{
+    font-size:clamp(48px,8vw,70px);
+    color:white;
 
-  position:fixed;
-
-  inset:0;
-
-  display:none;
-
-  flex-direction:column;
-
-  justify-content:center;
-
-  align-items:center;
-
-  background:
-    rgba(0,0,0,.78);
-
-  color:white;
-
-  z-index:20;
-
-  text-align:center;
+    text-shadow:
+        0 0 25px #f22;
 }
 
-
-#gameOver h1{
-
-  margin:0 0 10px;
-
-  font-size:72px;
-
-  letter-spacing:4px;
-
-  text-shadow:
-    0 0 20px red;
+.finalScore{
+    font-size:27px;
 }
 
-
-#gameOver p{
-
-  font-size:25px;
-
-  margin:8px;
-}
-
-
-#newHigh{
-
-  color:#ffd43b;
-
-  font-size:25px;
-
-  font-weight:bold;
-
-  display:none;
-}
-
-
-/* =========================
-   BUTTON
-========================= */
-
-button{
-
-  margin-top:25px;
-
-  padding:15px 38px;
-
-  border:0;
-
-  border-radius:12px;
-
-  background:
-    linear-gradient(
-      #ffcf33,
-      #ff941f
-    );
-
-  color:#321500;
-
-  font-size:22px;
-
-  font-weight:bold;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 5px 15px
-    rgba(0,0,0,.4);
-}
-
-
-button:hover{
-
-  transform:scale(1.05);
-}
-
-
-.hidden{
-
-  display:none !important;
+.newBest{
+    color:#ffd83d;
+    font-size:23px;
+    font-weight:bold;
 }
 
 </style>
-
 </head>
 
-
 <body>
+
+<canvas id="game"></canvas>
 
 
 <!-- =========================
@@ -375,22 +377,21 @@ button:hover{
 
 <div id="hud">
 
-  <div>
+    <div>
 
-    <div id="score">
-      Score: 0
+        <div id="score">
+            0
+        </div>
+
+        <div id="best">
+            BEST 0
+        </div>
+
     </div>
 
-    <div id="highScore">
-      Best: 0
+    <div id="lives">
+        ❤️❤️❤️
     </div>
-
-  </div>
-
-
-  <div id="lives">
-    ❤️❤️❤️
-  </div>
 
 </div>
 
@@ -399,26 +400,196 @@ button:hover{
 
 
 <!-- =========================
-     START
+     MAIN MENU
 ========================= -->
 
-<div id="startScreen">
+<div
+    id="startScreen"
+    class="overlay"
+>
 
-  <h1>
-    FRUIT NINJA
-  </h1>
+    <div class="logo">
+        FRUIT SLICE
+    </div>
 
-  <p>
-    Slice the fruit. Avoid the bombs.
-  </p>
+    <div class="subtitle">
+        Move your mouse to slice
+    </div>
 
-  <p>
-    Hold your mouse button and drag to slash.
-  </p>
+    <button id="playButton">
+        PLAY
+    </button>
 
-  <button id="startButton">
-    START GAME
-  </button>
+    <button
+        id="settingsFromStart"
+        class="secondary"
+    >
+        SETTINGS
+    </button>
+
+</div>
+
+
+<!-- =========================
+     PAUSE
+========================= -->
+
+<div
+    id="pauseScreen"
+    class="overlay hidden"
+>
+
+    <div class="pauseTitle">
+        PAUSED
+    </div>
+
+    <button id="resumeButton">
+        RESUME
+    </button>
+
+    <button
+        id="pauseSettings"
+        class="secondary"
+    >
+        SETTINGS
+    </button>
+
+    <button
+        id="quitButton"
+        class="secondary"
+    >
+        QUIT
+    </button>
+
+</div>
+
+
+<!-- =========================
+     SETTINGS
+========================= -->
+
+<div
+    id="settingsScreen"
+    class="overlay hidden"
+>
+
+    <div class="panel">
+
+        <!-- X BUTTON -->
+
+        <button
+            id="closeSettingsX"
+            class="closeSettingsX"
+            aria-label="Close settings"
+        >
+            ✕
+        </button>
+
+
+        <h2>
+            SETTINGS
+        </h2>
+
+
+        <div class="setting">
+
+            <span>
+                Sound Effects
+            </span>
+
+            <input
+                id="soundToggle"
+                type="checkbox"
+                checked
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <span>
+                Music
+            </span>
+
+            <input
+                id="musicToggle"
+                type="checkbox"
+                checked
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <span>
+                Master Volume
+            </span>
+
+            <input
+                id="volume"
+                type="range"
+                min="0"
+                max="100"
+                value="70"
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <span>
+                Blade Trail
+            </span>
+
+            <input
+                id="trailToggle"
+                type="checkbox"
+                checked
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <span>
+                Particles
+            </span>
+
+            <input
+                id="particlesToggle"
+                type="checkbox"
+                checked
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <span>
+                Screen Shake
+            </span>
+
+            <input
+                id="shakeToggle"
+                type="checkbox"
+                checked
+            >
+
+        </div>
+
+
+        <button
+            id="fullscreenButton"
+        >
+            FULLSCREEN
+        </button>
+
+    </div>
 
 </div>
 
@@ -427,2039 +598,2502 @@ button:hover{
      GAME OVER
 ========================= -->
 
-<div id="gameOver">
+<div
+    id="gameOver"
+    class="overlay hidden"
+>
 
-  <h1>
-    GAME OVER
-  </h1>
+    <div class="gameOverTitle">
+        GAME OVER
+    </div>
 
-  <p id="finalScore">
-    Score: 0
-  </p>
+    <div
+        id="finalScore"
+        class="finalScore"
+    >
+        Score: 0
+    </div>
 
-  <p id="finalBest">
-    Best: 0
-  </p>
+    <div
+        id="newBest"
+        class="newBest hidden"
+    >
+        NEW BEST!
+    </div>
 
-  <p id="newHigh">
-    NEW HIGH SCORE!
-  </p>
+    <button id="againButton">
+        PLAY AGAIN
+    </button>
 
-  <button id="restartButton">
-    PLAY AGAIN
-  </button>
+    <button
+        id="gameOverSettings"
+        class="secondary"
+    >
+        SETTINGS
+    </button>
 
 </div>
 
 
-<canvas id="game"></canvas>
-
-
 <script>
 
-
-/* =========================
+/* =========================================================
    CANVAS
-========================= */
+========================================================= */
 
 const canvas =
-  document.getElementById(
-    "game"
-  );
+    document.getElementById("game");
 
 const ctx =
-  canvas.getContext(
-    "2d"
-  );
+    canvas.getContext("2d");
 
-
-/* =========================
-   VARIABLES
-========================= */
-
-let fruits=[];
-
-let slicedFruits=[];
-
-let particles=[];
-
-let bladeTrail=[];
-
-
-let score=0;
-
-let lives=3;
-
-let running=false;
-
-
-let combo=0;
-
-let comboTimer=0;
-
-
-let spawnTimer=0;
-
-let lastTime=
-  performance.now();
-
-
-let mouseX=0;
-
-let mouseY=0;
-
-let mouseDown=false;
-
-
-let highScore=
-  Number(
-    localStorage.getItem(
-      "fruitNinjaHighScore"
-    )
-  ) || 0;
-
-
-document
-  .getElementById(
-    "highScore"
-  )
-  .textContent=
-    "Best: "+highScore;
-
-
-/* =========================
-   RESIZE
-========================= */
-
-function resize(){
-
-  canvas.width=
+let W =
     window.innerWidth;
 
-  canvas.height=
+let H =
     window.innerHeight;
+
+
+function resizeCanvas(){
+
+    W =
+        window.innerWidth;
+
+    H =
+        window.innerHeight;
+
+    canvas.width =
+        W;
+
+    canvas.height =
+        H;
+
+}
+
+resizeCanvas();
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+/* =========================================================
+   SCREEN SCALE
+========================================================= */
+
+function screenScale(){
+
+    const baseHeight =
+        900;
+
+    return Math.min(
+        1,
+        H / baseHeight
+    );
 
 }
 
 
-resize();
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const settings = {
+
+    sound:true,
+    music:true,
+    volume:.70,
+    trail:true,
+    particles:true,
+    shake:true
+
+};
 
 
-window.addEventListener(
-  "resize",
-  resize
-);
+const soundToggle =
+    document.getElementById(
+        "soundToggle"
+    );
+
+const musicToggle =
+    document.getElementById(
+        "musicToggle"
+    );
+
+const volumeSlider =
+    document.getElementById(
+        "volume"
+    );
+
+const trailToggle =
+    document.getElementById(
+        "trailToggle"
+    );
+
+const particlesToggle =
+    document.getElementById(
+        "particlesToggle"
+    );
+
+const shakeToggle =
+    document.getElementById(
+        "shakeToggle"
+    );
 
 
-/* =========================
-   FRUIT TYPES
-========================= */
+function loadSettings(){
 
-const fruitTypes=[
+    const saved =
+        JSON.parse(
+            localStorage.getItem(
+                "fruitSliceSettings"
+            ) || "null"
+        );
 
-  {
-    emoji:"🍎",
-    color:"#e53935"
-  },
+    if(!saved)
+        return;
 
-  {
-    emoji:"🍊",
-    color:"#ff9800"
-  },
+    Object.assign(
+        settings,
+        saved
+    );
 
-  {
-    emoji:"🍌",
-    color:"#ffd600"
-  },
+    soundToggle.checked =
+        settings.sound;
 
-  {
-    emoji:"🍉",
-    color:"#43a047"
-  },
+    musicToggle.checked =
+        settings.music;
 
-  {
-    emoji:"🍇",
-    color:"#8e44ad"
-  },
+    volumeSlider.value =
+        settings.volume * 100;
 
-  {
-    emoji:"🍍",
-    color:"#f5c542"
-  },
+    trailToggle.checked =
+        settings.trail;
 
-  {
-    emoji:"🥝",
-    color:"#7cb342"
-  },
+    particlesToggle.checked =
+        settings.particles;
 
-  {
-    emoji:"🍑",
-    color:"#ff8a65"
-  }
+    shakeToggle.checked =
+        settings.shake;
+
+}
+
+
+function saveSettings(){
+
+    localStorage.setItem(
+        "fruitSliceSettings",
+        JSON.stringify(settings)
+    );
+
+}
+
+loadSettings();
+
+
+soundToggle.onchange =
+    () => {
+
+        settings.sound =
+            soundToggle.checked;
+
+        saveSettings();
+
+    };
+
+
+musicToggle.onchange =
+    () => {
+
+        settings.music =
+            musicToggle.checked;
+
+        saveSettings();
+
+    };
+
+
+volumeSlider.oninput =
+    () => {
+
+        settings.volume =
+            volumeSlider.value / 100;
+
+        saveSettings();
+
+    };
+
+
+trailToggle.onchange =
+    () => {
+
+        settings.trail =
+            trailToggle.checked;
+
+        saveSettings();
+
+    };
+
+
+particlesToggle.onchange =
+    () => {
+
+        settings.particles =
+            particlesToggle.checked;
+
+        saveSettings();
+
+    };
+
+
+shakeToggle.onchange =
+    () => {
+
+        settings.shake =
+            shakeToggle.checked;
+
+        saveSettings();
+
+    };
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+let audioContext =
+    null;
+
+
+function initAudio(){
+
+    if(!audioContext){
+
+        audioContext =
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+function sound(
+    frequency,
+    duration,
+    type="sine",
+    volume=.08
+){
+
+    if(!settings.sound)
+        return;
+
+    initAudio();
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type =
+        type;
+
+    oscillator.frequency.value =
+        frequency;
+
+    gain.gain.setValueAtTime(
+        volume *
+        settings.volume,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime +
+        duration
+    );
+
+    oscillator.connect(
+        gain
+    );
+
+    gain.connect(
+        audioContext.destination
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime +
+        duration
+    );
+
+}
+
+
+function sliceSound(){
+
+    sound(
+        600 +
+        Math.random()*500,
+        .07,
+        "triangle",
+        .06
+    );
+
+}
+
+
+function bombSound(){
+
+    sound(
+        80,
+        .45,
+        "sawtooth",
+        .18
+    );
+
+}
+
+
+/* =========================================================
+   GAME VARIABLES
+========================================================= */
+
+let state =
+    "menu";
+
+let score =
+    0;
+
+let lives =
+    3;
+
+let best =
+    Number(
+        localStorage.getItem(
+            "fruitSliceBest"
+        )
+    ) || 0;
+
+let fruits = [];
+
+let pieces = [];
+
+let particles = [];
+
+let blade = [];
+
+let spawnTimer =
+    0;
+
+let combo =
+    0;
+
+let comboTimer =
+    0;
+
+let shake =
+    0;
+
+let lastTime =
+    performance.now();
+
+
+document.getElementById(
+    "best"
+).textContent =
+    "BEST " + best;
+
+
+/* =========================================================
+   FRUITS
+========================================================= */
+
+const fruitData = [
+
+    {
+        emoji:"🍎",
+        color:"#ef3340"
+    },
+
+    {
+        emoji:"🍊",
+        color:"#ff8c00"
+    },
+
+    {
+        emoji:"🍋",
+        color:"#ffe13b"
+    },
+
+    {
+        emoji:"🍉",
+        color:"#35b94a"
+    },
+
+    {
+        emoji:"🍇",
+        color:"#8e44ad"
+    },
+
+    {
+        emoji:"🍍",
+        color:"#e8bd35"
+    },
+
+    {
+        emoji:"🍑",
+        color:"#ff9671"
+    },
+
+    {
+        emoji:"🥝",
+        color:"#78a832"
+    }
 
 ];
 
 
-/* =========================
-   DIFFICULTY
-========================= */
+function random(
+    min,
+    max
+){
 
-function difficulty(){
-
-  return Math.floor(
-    score/10
-  );
-
-}
-
-
-/* =========================
-   VERY HIGH RANDOM
-   LAUNCH SYSTEM
-========================= */
-
-function getLaunchVelocity(){
-
-  const roll=
-    Math.random();
-
-
-  /*
-    15% HIGH
-  */
-
-  if(
-    roll < .15
-  ){
-
-    return (
-      16 +
-      Math.random()*3
-    );
-
-  }
-
-
-  /*
-    30% VERY HIGH
-  */
-
-  if(
-    roll < .45
-  ){
-
-    return (
-      19 +
-      Math.random()*4
-    );
-
-  }
-
-
-  /*
-    35% EXTREMELY HIGH
-  */
-
-  if(
-    roll < .80
-  ){
-
-    return (
-      22 +
-      Math.random()*5
-    );
-
-  }
-
-
-  /*
-    20% SUPER HIGH
-  */
-
-  return (
-    26 +
-    Math.random()*6
-  );
+    return min +
+        Math.random() *
+        (max-min);
 
 }
 
 
-/* =========================
-   FRUIT
-========================= */
+/* =========================================================
+   FRUIT CLASS
+========================================================= */
 
 class Fruit{
 
-  constructor(){
+    constructor(){
 
-    /*
-      RANDOM START
-    */
+        const scale =
+            screenScale();
 
-    this.x=
-      canvas.width *
-      (
-        .07+
-        Math.random()*.86
-      );
+        this.data =
+            fruitData[
+                Math.floor(
+                    Math.random() *
+                    fruitData.length
+                )
+            ];
 
+        this.radius =
+            random(
+                32,
+                45
+            );
 
-    /*
-      START BELOW SCREEN
-    */
+        this.x =
+            random(
+                W*.12,
+                W*.88
+            );
 
-    this.y=
-      canvas.height+
-      50+
-      Math.random()*100;
-
-
-    /*
-      RANDOM SIZE
-    */
-
-    this.size=
-      58+
-      Math.random()*18;
+        this.y =
+            H +
+            this.radius*2;
 
 
-    /*
-      RANDOM LEFT/RIGHT
-    */
+        const arc =
+            Math.random();
 
-    this.vx=
-      (
-        Math.random()-.5
-      )*
-      (
-        3+
-        Math.random()*6
-      );
+        let launch;
 
 
-    /*
-      HIGH RANDOM JUMP
-    */
+        if(
+            arc < .20
+        ){
 
-    this.vy=
-      -(
-        getLaunchVelocity()+
-        difficulty()*.10
-      );
+            launch =
+                random(
+                    12,
+                    15
+                );
 
+        }
+        else if(
+            arc < .50
+        ){
 
-    /*
-      RANDOM ROTATION
-    */
+            launch =
+                random(
+                    15,
+                    18
+                );
 
-    this.rotation=
-      Math.random()*
-      Math.PI*
-      2;
+        }
+        else if(
+            arc < .82
+        ){
 
+            launch =
+                random(
+                    18,
+                    21
+                );
 
-    this.rotationSpeed=
-      (
-        Math.random()-.5
-      )*
-      (
-        .05+
-        Math.random()*.09
-      );
+        }
+        else{
 
+            launch =
+                random(
+                    21,
+                    24
+                );
 
-    /*
-      RANDOM FRUIT
-    */
-
-    this.type=
-      fruitTypes[
-        Math.floor(
-          Math.random()*
-          fruitTypes.length
-        )
-      ];
-
-
-    this.dead=false;
-
-  }
+        }
 
 
-  update(dt){
+        this.vy =
+            -launch *
+            scale;
 
-    this.x+=
-      this.vx*dt;
-
-
-    this.y+=
-      this.vy*dt;
-
-
-    /*
-      LOWER GRAVITY
-
-      This keeps fruits
-      in the air longer.
-    */
-
-    this.vy+=
-      .30*dt;
+        this.vy =
+            Math.min(
+                this.vy,
+                -11
+            );
 
 
-    this.rotation+=
-      this.rotationSpeed*dt;
+        this.vx =
+            random(
+                -5.5,
+                5.5
+            ) *
+            scale;
 
 
-    /*
-      SIDE WALLS
-    */
+        this.gravity =
+            random(
+                .20,
+                .27
+            ) *
+            scale;
 
-    if(
-      this.x<
-      this.size
-    ){
 
-      this.x=
-        this.size;
+        this.rotation =
+            random(
+                0,
+                Math.PI*2
+            );
 
-      this.vx*=-1;
+        this.rotationSpeed =
+            random(
+                -.08,
+                .08
+            );
 
     }
 
 
-    if(
-      this.x>
-      canvas.width-
-      this.size
-    ){
+    update(dt){
 
-      this.x=
-        canvas.width-
-        this.size;
+        this.x +=
+            this.vx *
+            dt;
 
-      this.vx*=-1;
+        this.y +=
+            this.vy *
+            dt;
+
+        this.vy +=
+            this.gravity *
+            dt;
+
+        this.rotation +=
+            this.rotationSpeed *
+            dt;
+
+
+        if(
+            this.x <
+            this.radius
+        ){
+
+            this.x =
+                this.radius;
+
+            this.vx =
+                Math.abs(
+                    this.vx
+                );
+
+        }
+
+
+        if(
+            this.x >
+            W-this.radius
+        ){
+
+            this.x =
+                W-this.radius;
+
+            this.vx =
+                -Math.abs(
+                    this.vx
+                );
+
+        }
 
     }
 
-  }
 
+    draw(){
 
-  draw(){
+        ctx.save();
 
-    ctx.save();
+        ctx.translate(
+            this.x,
+            this.y
+        );
 
+        ctx.rotate(
+            this.rotation
+        );
 
-    ctx.translate(
-      this.x,
-      this.y
-    );
+        ctx.shadowColor =
+            "rgba(0,0,0,.45)";
 
+        ctx.shadowBlur =
+            12;
 
-    ctx.rotate(
-      this.rotation
-    );
+        ctx.shadowOffsetY =
+            7;
 
+        ctx.font =
+            `${this.radius*2}px Arial`;
 
-    ctx.font=
-      this.size+
-      "px Arial";
+        ctx.textAlign =
+            "center";
 
+        ctx.textBaseline =
+            "middle";
 
-    ctx.textAlign=
-      "center";
+        ctx.fillText(
+            this.data.emoji,
+            0,
+            0
+        );
 
+        ctx.restore();
 
-    ctx.textBaseline=
-      "middle";
-
-
-    ctx.shadowColor=
-      "rgba(255,255,255,.5)";
-
-
-    ctx.shadowBlur=10;
-
-
-    ctx.fillText(
-      this.type.emoji,
-      0,
-      0
-    );
-
-
-    ctx.restore();
-
-  }
+    }
 
 }
 
 
-/* =========================
+/* =========================================================
    BOMB
-========================= */
+========================================================= */
 
 class Bomb{
 
-  constructor(){
+    constructor(){
 
-    this.x=
-      canvas.width*
-      (
-        .07+
-        Math.random()*.86
-      );
+        const scale =
+            screenScale();
 
+        this.radius =
+            random(
+                34,
+                43
+            );
 
-    this.y=
-      canvas.height+
-      50+
-      Math.random()*100;
+        this.x =
+            random(
+                W*.12,
+                W*.88
+            );
 
+        this.y =
+            H+80;
 
-    this.size=
-      55+
-      Math.random()*12;
+        this.vy =
+            -random(
+                16,
+                20
+            ) *
+            scale;
 
+        this.vy =
+            Math.min(
+                this.vy,
+                -11
+            );
 
-    this.vx=
-      (
-        Math.random()-.5
-      )*
-      (
-        3+
-        Math.random()*6
-      );
+        this.vx =
+            random(
+                -5,
+                5
+            ) *
+            scale;
 
+        this.gravity =
+            .24 *
+            scale;
 
-    this.vy=
-      -(
-        getLaunchVelocity()+
-        difficulty()*.10
-      );
+        this.rotation =
+            random(
+                0,
+                Math.PI*2
+            );
 
-
-    this.rotation=
-      Math.random()*
-      Math.PI*
-      2;
-
-
-    this.rotationSpeed=
-      (
-        Math.random()-.5
-      )*.1;
-
-
-    this.dead=false;
-
-  }
-
-
-  update(dt){
-
-    this.x+=
-      this.vx*dt;
-
-
-    this.y+=
-      this.vy*dt;
-
-
-    this.vy+=
-      .30*dt;
-
-
-    this.rotation+=
-      this.rotationSpeed*dt;
-
-
-    if(
-      this.x<
-      this.size
-    ){
-
-      this.x=
-        this.size;
-
-      this.vx*=-1;
+        this.rotationSpeed =
+            random(
+                -.07,
+                .07
+            );
 
     }
 
 
-    if(
-      this.x>
-      canvas.width-
-      this.size
-    ){
+    update(dt){
 
-      this.x=
-        canvas.width-
-        this.size;
+        this.x +=
+            this.vx *
+            dt;
 
-      this.vx*=-1;
+        this.y +=
+            this.vy *
+            dt;
+
+        this.vy +=
+            this.gravity *
+            dt;
+
+        this.rotation +=
+            this.rotationSpeed *
+            dt;
+
+
+        if(
+            this.x <
+            this.radius
+        ){
+
+            this.x =
+                this.radius;
+
+            this.vx =
+                Math.abs(
+                    this.vx
+                );
+
+        }
+
+
+        if(
+            this.x >
+            W-this.radius
+        ){
+
+            this.x =
+                W-this.radius;
+
+            this.vx =
+                -Math.abs(
+                    this.vx
+                );
+
+        }
 
     }
 
-  }
 
+    draw(){
 
-  draw(){
+        ctx.save();
 
-    ctx.save();
+        ctx.translate(
+            this.x,
+            this.y
+        );
 
+        ctx.rotate(
+            this.rotation
+        );
 
-    ctx.translate(
-      this.x,
-      this.y
-    );
+        ctx.font =
+            `${this.radius*2}px Arial`;
 
+        ctx.textAlign =
+            "center";
 
-    ctx.rotate(
-      this.rotation
-    );
+        ctx.textBaseline =
+            "middle";
 
+        ctx.shadowColor =
+            "rgba(255,40,0,.7)";
 
-    ctx.font=
-      this.size+
-      "px Arial";
+        ctx.shadowBlur =
+            15;
 
+        ctx.fillText(
+            "💣",
+            0,
+            0
+        );
 
-    ctx.textAlign=
-      "center";
+        ctx.restore();
 
-
-    ctx.textBaseline=
-      "middle";
-
-
-    ctx.shadowColor=
-      "red";
-
-
-    ctx.shadowBlur=15;
-
-
-    ctx.fillText(
-      "💣",
-      0,
-      0
-    );
-
-
-    ctx.restore();
-
-  }
+    }
 
 }
 
 
-/* =========================
-   SLICED FRUIT HALF
-========================= */
+/* =========================================================
+   PIECES
+========================================================= */
 
-class FruitHalf{
+class Piece{
 
-  constructor(
-    x,
-    y,
-    emoji,
-    side
-  ){
+    constructor(
+        fruit,
+        side
+    ){
 
-    this.x=x;
+        this.x =
+            fruit.x;
 
-    this.y=y;
+        this.y =
+            fruit.y;
 
-    this.emoji=
-      emoji;
+        this.emoji =
+            fruit.data.emoji;
 
+        this.vx =
+            side *
+            random(
+                3,
+                6
+            );
 
-    this.vx=
-      side*
-      (
-        2+
-        Math.random()*3
-      );
+        this.vy =
+            random(
+                -5,
+                -3
+            );
 
+        this.gravity =
+            .25;
 
-    this.vy=
-      -(
-        2+
-        Math.random()*3
-      );
+        this.rotation =
+            fruit.rotation;
 
+        this.rotationSpeed =
+            side *
+            random(
+                .05,
+                .12
+            );
 
-    this.rotation=
-      Math.random()*
-      Math.PI;
+        this.life =
+            1;
 
-
-    this.rotationSpeed=
-      side*
-      (
-        .05+
-        Math.random()*.06
-      );
-
-
-    this.life=1;
-
-  }
+    }
 
 
-  update(dt){
+    update(dt){
 
-    this.x+=
-      this.vx*dt;
+        this.x +=
+            this.vx *
+            dt;
 
+        this.y +=
+            this.vy *
+            dt;
 
-    this.y+=
-      this.vy*dt;
+        this.vy +=
+            this.gravity *
+            dt;
 
+        this.rotation +=
+            this.rotationSpeed *
+            dt;
 
-    this.vy+=
-      .32*dt;
+        this.life -=
+            .018 *
+            dt;
 
-
-    this.rotation+=
-      this.rotationSpeed*dt;
-
-
-    this.life-=
-      .018*dt;
-
-  }
-
-
-  draw(){
-
-    if(
-      this.life<=0
-    )
-      return;
+    }
 
 
-    ctx.save();
+    draw(){
 
+        if(
+            this.life <= 0
+        )
+            return;
 
-    ctx.globalAlpha=
-      this.life;
+        ctx.save();
 
+        ctx.globalAlpha =
+            this.life;
 
-    ctx.translate(
-      this.x,
-      this.y
-    );
+        ctx.translate(
+            this.x,
+            this.y
+        );
 
+        ctx.rotate(
+            this.rotation
+        );
 
-    ctx.rotate(
-      this.rotation
-    );
+        ctx.font =
+            "70px Arial";
 
+        ctx.textAlign =
+            "center";
 
-    ctx.font=
-      "55px Arial";
+        ctx.textBaseline =
+            "middle";
 
+        ctx.fillText(
+            this.emoji,
+            0,
+            0
+        );
 
-    ctx.textAlign=
-      "center";
+        ctx.restore();
 
-
-    ctx.textBaseline=
-      "middle";
-
-
-    ctx.fillText(
-      this.emoji,
-      0,
-      0
-    );
-
-
-    ctx.restore();
-
-  }
+    }
 
 }
 
 
-/* =========================
-   PARTICLE
-========================= */
+/* =========================================================
+   PARTICLES
+========================================================= */
 
 class Particle{
 
-  constructor(
-    x,
-    y,
-    color
-  ){
-
-    this.x=x;
-
-    this.y=y;
-
-
-    this.vx=
-      (
-        Math.random()-.5
-      )*10;
-
-
-    this.vy=
-      (
-        Math.random()-.5
-      )*10;
-
-
-    this.life=1;
-
-
-    this.size=
-      2+
-      Math.random()*5;
-
-
-    this.color=
-      color;
-
-  }
-
-
-  update(dt){
-
-    this.x+=
-      this.vx*dt;
-
-
-    this.y+=
-      this.vy*dt;
-
-
-    this.vy+=
-      .2*dt;
-
-
-    this.life-=
-      .035*dt;
-
-  }
-
-
-  draw(){
-
-    if(
-      this.life<=0
-    )
-      return;
-
-
-    ctx.save();
-
-
-    ctx.globalAlpha=
-      this.life;
-
-
-    ctx.fillStyle=
-      this.color;
-
-
-    ctx.beginPath();
-
-
-    ctx.arc(
-      this.x,
-      this.y,
-      this.size,
-      0,
-      Math.PI*2
-    );
-
-
-    ctx.fill();
-
-
-    ctx.restore();
-
-  }
-
-}
-
-
-/* =========================
-   JUICE PARTICLES
-========================= */
-
-function createParticles(
-  fruit
-){
-
-  for(
-    let i=0;
-    i<25;
-    i++
-  ){
-
-    particles.push(
-      new Particle(
-        fruit.x,
-        fruit.y,
-        fruit.type.color
-      )
-    );
-
-  }
-
-}
-
-
-/* =========================
-   SPAWN WAVE
-========================= */
-
-function spawnWave(){
-
-  let amount=1;
-
-
-  /*
-    More fruits later.
-  */
-
-  if(
-    Math.random()<
-    Math.min(
-      .20+
-      difficulty()*.03,
-      .55
-    )
-  ){
-
-    amount=2;
-
-  }
-
-
-  if(
-    difficulty()>=3 &&
-    Math.random()<.25
-  ){
-
-    amount=3;
-
-  }
-
-
-  if(
-    difficulty()>=7 &&
-    Math.random()<.18
-  ){
-
-    amount=4;
-
-  }
-
-
-  for(
-    let i=0;
-    i<amount;
-    i++
-  ){
-
-    /*
-      Bomb chance.
-    */
-
-    const bombChance=
-      Math.min(
-        .07+
-        difficulty()*.006,
-        .16
-      );
-
-
-    if(
-      Math.random()<
-      bombChance
+    constructor(
+        x,
+        y,
+        color
     ){
 
-      fruits.push(
-        new Bomb()
-      );
+        this.x =
+            x;
 
-    }else{
+        this.y =
+            y;
 
-      fruits.push(
-        new Fruit()
-      );
+        this.vx =
+            random(
+                -8,
+                8
+            );
+
+        this.vy =
+            random(
+                -8,
+                8
+            );
+
+        this.size =
+            random(
+                2,
+                6
+            );
+
+        this.color =
+            color;
+
+        this.life =
+            1;
 
     }
 
-  }
+
+    update(dt){
+
+        this.x +=
+            this.vx *
+            dt;
+
+        this.y +=
+            this.vy *
+            dt;
+
+        this.vy +=
+            .22 *
+            dt;
+
+        this.life -=
+            .035 *
+            dt;
+
+    }
+
+
+    draw(){
+
+        if(
+            this.life <= 0
+        )
+            return;
+
+        ctx.save();
+
+        ctx.globalAlpha =
+            this.life;
+
+        ctx.fillStyle =
+            this.color;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.restore();
+
+    }
 
 }
 
 
-/* =========================
+/* =========================================================
    SLICE
-========================= */
+========================================================= */
 
-function slice(
-  x,
-  y
+function sliceFruit(
+    fruit
 ){
 
-  if(
-    !running
-  )
-    return;
-
-
-  let slicedSomething=
-    false;
-
-
-  for(
-    let i=
-      fruits.length-1;
-    i>=0;
-    i--
-  ){
-
-    const f=
-      fruits[i];
-
-
     if(
-      f.dead
-    )
-      continue;
-
-
-    const dx=
-      f.x-x;
-
-
-    const dy=
-      f.y-y;
-
-
-    const distance=
-      Math.sqrt(
-        dx*dx+
-        dy*dy
-      );
-
-
-    if(
-      distance<
-      f.size*.55
+        settings.particles
     ){
 
-      /*
-        BOMB
-      */
+        for(
+            let i=0;
+            i<25;
+            i++
+        ){
 
-      if(
-        f instanceof Bomb
-      ){
+            particles.push(
+                new Particle(
+                    fruit.x,
+                    fruit.y,
+                    fruit.data.color
+                )
+            );
 
-        bombHit();
+        }
 
+    }
+
+
+    pieces.push(
+        new Piece(
+            fruit,
+            -1
+        )
+    );
+
+    pieces.push(
+        new Piece(
+            fruit,
+            1
+        )
+    );
+
+    sliceSound();
+
+}
+
+
+/* =========================================================
+   MOUSE
+========================================================= */
+
+let mouseX =
+    -1000;
+
+let mouseY =
+    -1000;
+
+let previousMouseX =
+    -1000;
+
+let previousMouseY =
+    -1000;
+
+
+window.addEventListener(
+    "mousemove",
+    e => {
+
+        const newX =
+            e.clientX;
+
+        const newY =
+            e.clientY;
+
+
+        if(
+            state ===
+            "playing"
+        ){
+
+            const dx =
+                newX -
+                previousMouseX;
+
+            const dy =
+                newY -
+                previousMouseY;
+
+            const distance =
+                Math.sqrt(
+                    dx*dx +
+                    dy*dy
+                );
+
+            const steps =
+                Math.max(
+                    1,
+                    Math.ceil(
+                        distance /
+                        10
+                    )
+                );
+
+
+            for(
+                let i=1;
+                i<=steps;
+                i++
+            ){
+
+                const x =
+                    previousMouseX +
+                    dx *
+                    (i/steps);
+
+                const y =
+                    previousMouseY +
+                    dy *
+                    (i/steps);
+
+                checkSlice(
+                    x,
+                    y
+                );
+
+
+                if(
+                    settings.trail
+                ){
+
+                    blade.push({
+                        x:x,
+                        y:y,
+                        life:1
+                    });
+
+                }
+
+            }
+
+        }
+
+
+        mouseX =
+            newX;
+
+        mouseY =
+            newY;
+
+        previousMouseX =
+            newX;
+
+        previousMouseY =
+            newY;
+
+    }
+);
+
+
+/* =========================================================
+   SLICE CHECK
+========================================================= */
+
+function checkSlice(
+    x,
+    y
+){
+
+    if(
+        state !==
+        "playing"
+    )
         return;
 
-      }
+
+    for(
+        let i=fruits.length-1;
+        i>=0;
+        i--
+    ){
+
+        const fruit =
+            fruits[i];
+
+        const dx =
+            x -
+            fruit.x;
+
+        const dy =
+            y -
+            fruit.y;
+
+        const distance =
+            Math.sqrt(
+                dx*dx +
+                dy*dy
+            );
 
 
-      /*
-        FRUIT
-      */
+        if(
+            distance <
+            fruit.radius*1.15
+        ){
 
-      f.dead=
-        true;
+            if(
+                fruit instanceof Bomb
+            ){
 
+                bombExplode();
 
-      score++;
+                return;
 
-
-      slicedSomething=
-        true;
-
-
-      document
-        .getElementById(
-          "score"
-        )
-        .textContent=
-          "Score: "+
-          score;
+            }
 
 
-      createParticles(
-        f
-      );
+            fruits.splice(
+                i,
+                1
+            );
 
+            score++;
 
-      /*
-        LEFT HALF
-      */
+            sliceFruit(
+                fruit
+            );
 
-      slicedFruits.push(
-        new FruitHalf(
-          f.x,
-          f.y,
-          f.type.emoji,
-          -1
-        )
-      );
+            addCombo();
 
-
-      /*
-        RIGHT HALF
-      */
-
-      slicedFruits.push(
-        new FruitHalf(
-          f.x,
-          f.y,
-          f.type.emoji,
-          1
-        )
-      );
-
-
-      updateCombo();
-
-
-      fruits.splice(
-        i,
-        1
-      );
+        }
 
     }
-
-  }
-
-
-  /*
-    Hitting nothing
-    does NOT hurt you.
-  */
-
-  if(
-    slicedSomething
-  ){
-
-    bladeTrail.push({
-      x:x,
-      y:y,
-      life:1
-    });
-
-  }
 
 }
 
 
-/* =========================
+/* =========================================================
    COMBO
-========================= */
+========================================================= */
 
-function updateCombo(){
+function addCombo(){
 
-  combo++;
+    combo++;
 
-  comboTimer=
-    70;
-
-
-  if(
-    combo>=2
-  ){
-
-    const multiplier=
-      Math.min(
-        combo,
-        5
-      );
+    comboTimer =
+        55;
 
 
-    const bonus=
-      multiplier-1;
+    if(
+        combo>=2
+    ){
 
+        const bonus =
+            Math.min(
+                combo-1,
+                10
+            );
 
-    score+=
-      bonus;
+        score +=
+            bonus;
 
+        showCombo(
+            combo +
+            "x COMBO +" +
+            bonus
+        );
 
-    document
-      .getElementById(
-        "score"
-      )
-      .textContent=
-        "Score: "+
-        score;
+    }
 
-
-    showCombo(
-      combo+
-      "x COMBO!"
-    );
-
-  }
+    updateHUD();
 
 }
 
 
 function showCombo(
-  text
+    text
 ){
 
-  const element=
-    document.getElementById(
-      "combo"
-    );
-
-
-  element.textContent=
-    text;
-
-
-  element.classList.remove(
-    "show"
-  );
-
-
-  void element.offsetWidth;
-
-
-  element.classList.add(
-    "show"
-  );
-
-}
-
-
-/* =========================
-   BOMB HIT
-========================= */
-
-function bombHit(){
-
-  running=false;
-
-
-  for(
-    let i=0;
-    i<70;
-    i++
-  ){
-
-    particles.push(
-      new Particle(
-        mouseX,
-        mouseY,
-        Math.random()<.5
-          ? "orange"
-          : "red"
-      )
-    );
-
-  }
-
-
-  setTimeout(
-    endGame,
-    350
-  );
-
-}
-
-
-/* =========================
-   LOSE LIFE
-========================= */
-
-function loseLife(){
-
-  lives--;
-
-
-  updateLives();
-
-
-  if(
-    lives<=0
-  ){
-
-    endGame();
-
-  }
-
-}
-
-
-/* =========================
-   UPDATE LIVES
-========================= */
-
-function updateLives(){
-
-  let text="";
-
-
-  for(
-    let i=0;
-    i<3;
-    i++
-  ){
-
-    text+=
-      i<lives
-      ? "❤️"
-      : "🖤";
-
-  }
-
-
-  document
-    .getElementById(
-      "lives"
-    )
-    .textContent=
-      text;
-
-}
-
-
-/* =========================
-   BLADE
-========================= */
-
-function drawBlade(){
-
-  if(
-    bladeTrail.length<2
-  )
-    return;
-
-
-  ctx.save();
-
-
-  ctx.lineWidth=5;
-
-  ctx.lineCap=
-    "round";
-
-
-  ctx.shadowColor=
-    "white";
-
-
-  ctx.shadowBlur=
-    15;
-
-
-  ctx.beginPath();
-
-
-  for(
-    let i=0;
-    i<bladeTrail.length;
-    i++
-  ){
-
-    const p=
-      bladeTrail[i];
-
-
-    if(
-      i===0
-    ){
-
-      ctx.moveTo(
-        p.x,
-        p.y
-      );
-
-    }else{
-
-      ctx.lineTo(
-        p.x,
-        p.y
-      );
-
-    }
-
-  }
-
-
-  ctx.strokeStyle=
-    "rgba(255,255,255,.9)";
-
-
-  ctx.stroke();
-
-
-  ctx.restore();
-
-}
-
-
-/* =========================
-   UPDATE BLADE
-========================= */
-
-function updateBlade(
-  dt
-){
-
-  for(
-    let i=
-      bladeTrail.length-1;
-    i>=0;
-    i--
-  ){
-
-    bladeTrail[i].life-=
-      .08*dt;
-
-
-    if(
-      bladeTrail[i].life<=0
-    ){
-
-      bladeTrail.splice(
-        i,
-        1
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =========================
-   GAME LOOP
-========================= */
-
-function animate(
-  now
-){
-
-  const dt=
-    Math.min(
-      (now-lastTime)/
-      16.67,
-      2
-    );
-
-
-  lastTime=
-    now;
-
-
-  ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-
-  if(
-    running
-  ){
-
-    /*
-      SPAWN TIMER
-    */
-
-    spawnTimer-=
-      dt;
-
-
-    const spawnRate=
-      Math.max(
-        45,
-        75-
-        difficulty()*3
-      );
-
-
-    if(
-      spawnTimer<=0
-    ){
-
-      spawnWave();
-
-
-      spawnTimer=
-        spawnRate;
-
-    }
-
-
-    /*
-      FRUITS + BOMBS
-    */
-
-    for(
-      let i=
-        fruits.length-1;
-      i>=0;
-      i--
-    ){
-
-      const f=
-        fruits[i];
-
-
-      f.update(dt);
-
-
-      f.draw();
-
-
-      /*
-        Missed object.
-      */
-
-      if(
-        f.y>
-        canvas.height+
-        130
-      ){
-
-        fruits.splice(
-          i,
-          1
+    const element =
+        document.getElementById(
+            "combo"
         );
 
+    element.textContent =
+        text;
 
-        /*
-          ONLY MISSED
-          NORMAL FRUITS
-          COST A LIFE.
+    element.classList.remove(
+        "show"
+    );
 
-          Missing a bomb
-          does NOT cost a life.
-        */
+    void element.offsetWidth;
 
-        if(
-          f instanceof Fruit
+    element.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   BOMB
+========================================================= */
+
+function bombExplode(){
+
+    bombSound();
+
+    if(
+        settings.shake
+    ){
+
+        shake =
+            25;
+
+    }
+
+
+    if(
+        settings.particles
+    ){
+
+        for(
+            let i=0;
+            i<70;
+            i++
         ){
 
-          loseLife();
+            particles.push(
+                new Particle(
+                    mouseX,
+                    mouseY,
+                    Math.random()>.5
+                        ? "#ff8c00"
+                        : "#ff2222"
+                )
+            );
 
         }
 
-      }
-
     }
 
+    endGame();
 
-    /*
-      SLICED FRUIT HALVES
-    */
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD(){
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
+
+    document.getElementById(
+        "best"
+    ).textContent =
+        "BEST " + best;
+
+
+    let hearts = "";
 
     for(
-      let i=
-        slicedFruits.length-1;
-      i>=0;
-      i--
+        let i=0;
+        i<3;
+        i++
     ){
 
-      const half=
-        slicedFruits[i];
-
-
-      half.update(dt);
-
-
-      half.draw();
-
-
-      if(
-        half.life<=0 ||
-        half.y>
-        canvas.height+
-        150
-      ){
-
-        slicedFruits.splice(
-          i,
-          1
-        );
-
-      }
+        hearts +=
+            i<lives
+                ? "❤️"
+                : "🖤";
 
     }
 
 
-    /*
-      PARTICLES
-    */
+    document.getElementById(
+        "lives"
+    ).textContent =
+        hearts;
 
-    for(
-      let i=
-        particles.length-1;
-      i>=0;
-      i--
-    ){
-
-      const p=
-        particles[i];
+}
 
 
-      p.update(dt);
+/* =========================================================
+   MISS
+========================================================= */
 
-
-      p.draw();
-
-
-      if(
-        p.life<=0
-      ){
-
-        particles.splice(
-          i,
-          1
-        );
-
-      }
-
-    }
-
-
-    /*
-      COMBO
-    */
+function missFruit(
+    fruit
+){
 
     if(
-      comboTimer>0
+        fruit instanceof Bomb
+    )
+        return;
+
+
+    lives--;
+
+    combo =
+        0;
+
+    comboTimer =
+        0;
+
+    updateHUD();
+
+
+    if(
+        lives<=0
     ){
 
-      comboTimer-=
+        endGame();
+
+    }
+
+}
+
+
+/* =========================================================
+   SPAWN
+========================================================= */
+
+function spawnWave(){
+
+    const level =
+        Math.floor(
+            score/15
+        );
+
+    let amount =
+        1;
+
+
+    if(
+        Math.random() <
+        .35 +
+        level*.025
+    ){
+
+        amount =
+            2;
+
+    }
+
+
+    if(
+        level>=3 &&
+        Math.random()<.25
+    ){
+
+        amount =
+            3;
+
+    }
+
+
+    if(
+        level>=7 &&
+        Math.random()<.18
+    ){
+
+        amount =
+            4;
+
+    }
+
+
+    amount =
+        Math.min(
+            amount,
+            4
+        );
+
+
+    const bombChance =
+        Math.min(
+            .07 +
+            level*.008,
+            .15
+        );
+
+
+    for(
+        let i=0;
+        i<amount;
+        i++
+    ){
+
+        if(
+            Math.random() <
+            bombChance
+        ){
+
+            fruits.push(
+                new Bomb()
+            );
+
+        }
+        else{
+
+            fruits.push(
+                new Fruit()
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+function update(
+    dt
+){
+
+    if(
+        state !==
+        "playing"
+    )
+        return;
+
+
+    dt =
+        Math.min(
+            dt,
+            1.5
+        );
+
+
+    spawnTimer -=
         dt;
 
-    }else{
 
-      combo=0;
+    const level =
+        Math.floor(
+            score/15
+        );
 
 
-      document
-        .getElementById(
-          "combo"
-        )
-        .classList.remove(
-          "show"
+    const spawnRate =
+        Math.max(
+            48,
+            75 -
+            level*3
+        );
+
+
+    if(
+        spawnTimer<=0
+    ){
+
+        spawnWave();
+
+        spawnTimer =
+            spawnRate;
+
+    }
+
+
+    for(
+        let i=fruits.length-1;
+        i>=0;
+        i--
+    ){
+
+        const fruit =
+            fruits[i];
+
+        fruit.update(
+            dt
+        );
+
+
+        if(
+            fruit.y >
+            H+120
+        ){
+
+            fruits.splice(
+                i,
+                1
+            );
+
+            missFruit(
+                fruit
+            );
+
+        }
+
+    }
+
+
+    for(
+        let i=pieces.length-1;
+        i>=0;
+        i--
+    ){
+
+        pieces[i].update(
+            dt
+        );
+
+
+        if(
+            pieces[i].life<=0 ||
+            pieces[i].y>H+150
+        ){
+
+            pieces.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    for(
+        let i=particles.length-1;
+        i>=0;
+        i--
+    ){
+
+        particles[i].update(
+            dt
+        );
+
+
+        if(
+            particles[i].life<=0
+        ){
+
+            particles.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    if(
+        comboTimer>0
+    ){
+
+        comboTimer -=
+            dt;
+
+    }
+    else{
+
+        combo =
+            0;
+
+        document.getElementById(
+            "combo"
+        ).classList.remove(
+            "show"
         );
 
     }
 
 
-    updateBlade(
-      dt
+    for(
+        let i=blade.length-1;
+        i>=0;
+        i--
+    ){
+
+        blade[i].life -=
+            .09*dt;
+
+
+        if(
+            blade[i].life<=0
+        ){
+
+            blade.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    if(
+        shake>0
+    ){
+
+        shake -=
+            1.5*dt;
+
+        if(
+            shake<0
+        )
+            shake=0;
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAW
+========================================================= */
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        W,
+        H
     );
 
-  }
+
+    const gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            H
+        );
 
 
-  /*
-    DRAW BLADE
-  */
+    gradient.addColorStop(
+        0,
+        "#29351f"
+    );
 
-  drawBlade();
+    gradient.addColorStop(
+        .5,
+        "#182315"
+    );
+
+    gradient.addColorStop(
+        1,
+        "#080d08"
+    );
 
 
-  requestAnimationFrame(
-    animate
-  );
+    ctx.fillStyle =
+        gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+
+    ctx.save();
+
+
+    if(
+        shake>0 &&
+        settings.shake
+    ){
+
+        ctx.translate(
+            random(
+                -shake,
+                shake
+            ),
+            random(
+                -shake,
+                shake
+            )
+        );
+
+    }
+
+
+    for(
+        const fruit of fruits
+    ){
+
+        fruit.draw();
+
+    }
+
+
+    for(
+        const piece of pieces
+    ){
+
+        piece.draw();
+
+    }
+
+
+    for(
+        const particle of particles
+    ){
+
+        particle.draw();
+
+    }
+
+
+    /* BLADE */
+
+    if(
+        settings.trail &&
+        blade.length>1
+    ){
+
+        ctx.save();
+
+        ctx.lineCap =
+            "round";
+
+        ctx.lineJoin =
+            "round";
+
+        ctx.lineWidth =
+            7;
+
+        ctx.shadowColor =
+            "white";
+
+        ctx.shadowBlur =
+            18;
+
+        ctx.strokeStyle =
+            "rgba(255,255,255,.95)";
+
+
+        ctx.beginPath();
+
+
+        for(
+            let i=0;
+            i<blade.length;
+            i++
+        ){
+
+            const p =
+                blade[i];
+
+
+            if(
+                i===0
+            ){
+
+                ctx.moveTo(
+                    p.x,
+                    p.y
+                );
+
+            }
+            else{
+
+                ctx.lineTo(
+                    p.x,
+                    p.y
+                );
+
+            }
+
+        }
+
+
+        ctx.stroke();
+
+        ctx.restore();
+
+    }
+
+
+    /* MOUSE TIP */
+
+    if(
+        state==="playing"
+    ){
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.arc(
+            mouseX,
+            mouseY,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle =
+            "white";
+
+        ctx.shadowColor =
+            "white";
+
+        ctx.shadowBlur =
+            15;
+
+        ctx.fill();
+
+        ctx.restore();
+
+    }
+
+
+    ctx.restore();
+
+}
+
+
+/* =========================================================
+   LOOP
+========================================================= */
+
+function loop(
+    now
+){
+
+    let dt =
+        (now-lastTime) /
+        16.6667;
+
+    lastTime =
+        now;
+
+
+    dt =
+        Math.min(
+            dt,
+            1.5
+        );
+
+
+    update(
+        dt
+    );
+
+    draw();
+
+
+    requestAnimationFrame(
+        loop
+    );
 
 }
 
 
 requestAnimationFrame(
-  animate
+    loop
 );
 
 
-/* =========================
-   MOUSE
-========================= */
-
-canvas.addEventListener(
-  "mousedown",
-  e=>{
-
-    mouseDown=
-      true;
-
-
-    mouseX=
-      e.clientX;
-
-
-    mouseY=
-      e.clientY;
-
-
-    slice(
-      mouseX,
-      mouseY
-    );
-
-  }
-);
-
-
-canvas.addEventListener(
-  "mouseup",
-  ()=>{
-
-    mouseDown=
-      false;
-
-  }
-);
-
-
-canvas.addEventListener(
-  "mouseleave",
-  ()=>{
-
-    mouseDown=
-      false;
-
-  }
-);
-
-
-canvas.addEventListener(
-  "mousemove",
-  e=>{
-
-    mouseX=
-      e.clientX;
-
-
-    mouseY=
-      e.clientY;
-
-
-    if(
-      mouseDown &&
-      running
-    ){
-
-      bladeTrail.push({
-        x:mouseX,
-        y:mouseY,
-        life:1
-      });
-
-
-      slice(
-        mouseX,
-        mouseY
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================
-   TOUCH
-========================= */
-
-canvas.addEventListener(
-  "touchstart",
-  e=>{
-
-    e.preventDefault();
-
-
-    const t=
-      e.touches[0];
-
-
-    mouseX=
-      t.clientX;
-
-
-    mouseY=
-      t.clientY;
-
-
-    bladeTrail.push({
-      x:mouseX,
-      y:mouseY,
-      life:1
-    });
-
-
-    slice(
-      mouseX,
-      mouseY
-    );
-
-  },
-  {
-    passive:false
-  }
-);
-
-
-canvas.addEventListener(
-  "touchmove",
-  e=>{
-
-    e.preventDefault();
-
-
-    const t=
-      e.touches[0];
-
-
-    mouseX=
-      t.clientX;
-
-
-    mouseY=
-      t.clientY;
-
-
-    bladeTrail.push({
-      x:mouseX,
-      y:mouseY,
-      life:1
-    });
-
-
-    slice(
-      mouseX,
-      mouseY
-    );
-
-  },
-  {
-    passive:false
-  }
-);
-
-
-/* =========================
-   START GAME
-========================= */
+/* =========================================================
+   START
+========================================================= */
 
 function startGame(){
 
-  fruits=[];
+    initAudio();
 
-  slicedFruits=[];
+    fruits=[];
+    pieces=[];
+    particles=[];
+    blade=[];
 
-  particles=[];
+    score=0;
+    lives=3;
+    combo=0;
+    comboTimer=0;
+    spawnTimer=10;
+    shake=0;
 
-  bladeTrail=[];
+    state=
+        "playing";
 
-
-  score=0;
-
-  lives=3;
-
-  combo=0;
-
-  comboTimer=0;
-
-  spawnTimer=0;
-
-
-  running=
-    true;
+    updateHUD();
 
 
-  document
-    .getElementById(
-      "score"
-    )
-    .textContent=
-      "Score: 0";
-
-
-  updateLives();
-
-
-  document
-    .getElementById(
-      "combo"
-    )
-    .classList.remove(
-      "show"
+    document.getElementById(
+        "startScreen"
+    ).classList.add(
+        "hidden"
     );
 
-
-  document
-    .getElementById(
-      "startScreen"
-    )
-    .classList.add(
-      "hidden"
+    document.getElementById(
+        "gameOver"
+    ).classList.add(
+        "hidden"
     );
 
-
-  document
-    .getElementById(
-      "gameOver"
-    )
-    .style.display=
-      "none";
-
-
-  lastTime=
-    performance.now();
+    document.getElementById(
+        "pauseScreen"
+    ).classList.add(
+        "hidden"
+    );
 
 }
 
 
-/* =========================
-   START BUTTON
-========================= */
-
-document
-  .getElementById(
-    "startButton"
-  )
-  .addEventListener(
-    "click",
-    startGame
-  );
-
-
-/* =========================
+/* =========================================================
    GAME OVER
-========================= */
+========================================================= */
 
 function endGame(){
 
-  if(
-    document
-      .getElementById(
-        "gameOver"
-      )
-      .style.display===
-      "flex"
-  ){
-
-    return;
-
-  }
+    if(
+        state==="gameover"
+    )
+        return;
 
 
-  running=
-    false;
+    state=
+        "gameover";
 
 
-  /*
-    HIGH SCORE ONLY
-    SAVES THE SCORE.
-
-    It cannot trigger
-    game over.
-  */
-
-  const isNewHigh=
-    score>
-    highScore;
+    const newBest =
+        score>best;
 
 
-  if(
-    isNewHigh
-  ){
+    if(
+        newBest
+    ){
 
-    highScore=
-      score;
+        best =
+            score;
+
+        localStorage.setItem(
+            "fruitSliceBest",
+            best
+        );
+
+    }
 
 
-    localStorage.setItem(
-      "fruitNinjaHighScore",
-      highScore
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        "Score: " + score;
+
+
+    document.getElementById(
+        "newBest"
+    ).classList.toggle(
+        "hidden",
+        !newBest
     );
 
-  }
+
+    document.getElementById(
+        "gameOver"
+    ).classList.remove(
+        "hidden"
+    );
 
 
-  document
-    .getElementById(
-      "finalScore"
-    )
-    .textContent=
-      "Score: "+
-      score;
-
-
-  document
-    .getElementById(
-      "finalBest"
-    )
-    .textContent=
-      "Best: "+
-      highScore;
-
-
-  document
-    .getElementById(
-      "newHigh"
-    )
-    .style.display=
-      isNewHigh
-      ? "block"
-      : "none";
-
-
-  document
-    .getElementById(
-      "gameOver"
-    )
-    .style.display=
-      "flex";
+    updateHUD();
 
 }
 
 
-/* =========================
-   RESTART
-========================= */
+/* =========================================================
+   PAUSE
+========================================================= */
 
-document
-  .getElementById(
-    "restartButton"
-  )
-  .addEventListener(
-    "click",
-    startGame
-  );
+function pauseGame(){
+
+    if(
+        state!=="playing"
+    )
+        return;
+
+    state=
+        "paused";
 
 
-/* =========================
-   PREVENT SCROLLING
-========================= */
+    document.getElementById(
+        "pauseScreen"
+    ).classList.remove(
+        "hidden"
+    );
 
-document.body.addEventListener(
-  "touchmove",
-  e=>{
-    e.preventDefault();
-  },
-  {
-    passive:false
-  }
+}
+
+
+function resumeGame(){
+
+    if(
+        state!=="paused"
+    )
+        return;
+
+    state=
+        "playing";
+
+
+    lastTime =
+        performance.now();
+
+
+    document.getElementById(
+        "pauseScreen"
+    ).classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================================
+   SETTINGS SYSTEM
+========================================================= */
+
+let settingsReturnTo =
+    "menu";
+
+
+function openSettings(
+    returnScreen
+){
+
+    settingsReturnTo =
+        returnScreen;
+
+
+    /*
+     * HIDE EVERYTHING ELSE
+     */
+
+    document.getElementById(
+        "startScreen"
+    ).classList.add(
+        "hidden"
+    );
+
+    document.getElementById(
+        "pauseScreen"
+    ).classList.add(
+        "hidden"
+    );
+
+    document.getElementById(
+        "gameOver"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    /*
+     * SHOW ONLY SETTINGS
+     */
+
+    document.getElementById(
+        "settingsScreen"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function closeSettings(){
+
+    document.getElementById(
+        "settingsScreen"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    if(
+        settingsReturnTo ===
+        "menu"
+    ){
+
+        document.getElementById(
+            "startScreen"
+        ).classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    else if(
+        settingsReturnTo ===
+        "pause"
+    ){
+
+        document.getElementById(
+            "pauseScreen"
+        ).classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    else if(
+        settingsReturnTo ===
+        "gameover"
+    ){
+
+        document.getElementById(
+            "gameOver"
+        ).classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+document.getElementById(
+    "playButton"
+).onclick =
+    startGame;
+
+
+document.getElementById(
+    "againButton"
+).onclick =
+    startGame;
+
+
+document.getElementById(
+    "settingsFromStart"
+).onclick =
+    () => {
+
+        openSettings(
+            "menu"
+        );
+
+    };
+
+
+document.getElementById(
+    "pauseSettings"
+).onclick =
+    () => {
+
+        openSettings(
+            "pause"
+        );
+
+    };
+
+
+document.getElementById(
+    "gameOverSettings"
+).onclick =
+    () => {
+
+        openSettings(
+            "gameover"
+        );
+
+    };
+
+
+/* X BUTTON */
+
+document.getElementById(
+    "closeSettingsX"
+).onclick =
+    closeSettings;
+
+
+/* RESUME */
+
+document.getElementById(
+    "resumeButton"
+).onclick =
+    resumeGame;
+
+
+/* QUIT */
+
+document.getElementById(
+    "quitButton"
+).onclick =
+    () => {
+
+        state =
+            "menu";
+
+
+        document.getElementById(
+            "pauseScreen"
+        ).classList.add(
+            "hidden"
+        );
+
+
+        document.getElementById(
+            "startScreen"
+        ).classList.remove(
+            "hidden"
+        );
+
+    };
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+document.getElementById(
+    "fullscreenButton"
+).onclick =
+    async () => {
+
+        try{
+
+            if(
+                !document.fullscreenElement
+            ){
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+            }
+            else{
+
+                await document
+                    .exitFullscreen();
+
+            }
+
+        }
+        catch(error){
+
+            console.log(
+                "Fullscreen unavailable"
+            );
+
+        }
+
+    };
+
+
+/* =========================================================
+   ESC = PAUSE / CLOSE SETTINGS
+========================================================= */
+
+window.addEventListener(
+    "keydown",
+    e => {
+
+        if(
+            e.key!=="Escape"
+        )
+            return;
+
+
+        if(
+            !document
+                .getElementById(
+                    "settingsScreen"
+                )
+                .classList
+                .contains(
+                    "hidden"
+                )
+        ){
+
+            closeSettings();
+
+            return;
+
+        }
+
+
+        if(
+            state==="playing"
+        ){
+
+            pauseGame();
+
+        }
+        else if(
+            state==="paused"
+        ){
+
+            resumeGame();
+
+        }
+
+    }
 );
 
 </script>
